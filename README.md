@@ -8,8 +8,9 @@ backend uses FastAPI framework and authlib library for authentication.
 
 ## how to run backend
 1. cd into server folder
-2. run flollowin commands to install packages: 'pipenv install', 'pipenv shell', 'pipenv install -r requirements.txt'
-3. run 'uvicorn main:app --reload' to run the backend server
+2. obtain '.env' file from Reo and place inside server folder
+3. run flollowin commands to install packages: 'pipenv install', 'pipenv shell', 'pipenv install -r requirements.txt'
+4. run 'uvicorn main:app --reload' to run the backend server
 
 ## how to install new packages
 1. make sure you are in server folder
