@@ -1,0 +1,12 @@
+version: "1"
+services:
+  backend:
+    build: ./server
+    ports:
+      - "8000:80"
+  nginx:
+    build: .
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

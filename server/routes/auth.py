@@ -8,6 +8,7 @@ router = APIRouter()
 @router.get("/login/{provider}")
 async def login(provider: str, request: Request):
     redirect_uri = request.url_for("auth_callback", provider=provider)
+    print(redirect_uri)
     client = oauth.create_client(provider)
     return await client.authorize_redirect(request, redirect_uri)  # type: ignore
 
@@ -24,7 +25,7 @@ async def auth_callback(provider: str, request: Request):
     if user_info:
         request.session["user"] = user
 
-    return RedirectResponse("/auth/check")
+    return RedirectResponse(request.url_for("protected"))
 
 
 @router.get("/check")
