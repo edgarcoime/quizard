@@ -1,3 +1,6 @@
+"use client";
+// Example of a client side rendered page
+
 import { API_BASE_URL, SERVER_VISIBLE_ONLY } from "@/constants";
 
 export default function Page() {
@@ -7,8 +10,6 @@ export default function Page() {
   };
 
   async function submitHandler() {
-    "use server";
-
     console.log("submitHandler: inside");
     console.log(API_BASE_URL);
   }
