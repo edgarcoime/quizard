@@ -8,9 +8,11 @@ export default function Page({
   return (
     <>
       <h1>
-        <strong>CREATE</strong> A page to create a new card in the collection it
-        is associated to
+        Collection <strong>SETTINGS</strong> PAGE
       </h1>
+      <p>
+        Can modify collection visibility and edit name or cards inside quickly
+      </p>
       <p>Username: {username}</p>
       <p>Collection: {collection}</p>
     </>
