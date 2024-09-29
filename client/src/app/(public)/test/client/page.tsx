@@ -1,5 +1,6 @@
 "use client";
 // Example of a client side rendered page
+// https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#passing-additional-arguments
 
 import { API_BASE_URL, SERVER_VISIBLE_ONLY } from "@/constants";
 
