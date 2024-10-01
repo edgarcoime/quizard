@@ -5,21 +5,14 @@ export default async function UserProtectedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Do logic to check for user cookies and permissions
   return (
-    <div>
-      <main>
-        <h1>
-          <strong>PRIVATE LAYOUT</strong>
-        </h1>
-        <div>
-          <h2>
-            Will have access to the user here because it is validated by the
-            user layout
-          </h2>
-        </div>
-
-        {children}
-      </main>
-    </div>
+    <>
+      <section>
+        <h2>Have access to User config from server</h2>
+      </section>
+      <h1>USER PROTECTED</h1>
+      {children}
+    </>
   );
 }
