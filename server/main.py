@@ -1,8 +1,11 @@
 import os
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from routes import auth
 from config.settings import settings
+from config.database import Base, engine, SessionLocal
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.add_middleware(
@@ -12,7 +15,9 @@ app.add_middleware(
     https_only=os.getenv("ENV", "development") != "development",
 )
 
-app.include_router(auth.router, prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/api")
+router.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(router)
 
 if __name__ == "__main__":
     import uvicorn

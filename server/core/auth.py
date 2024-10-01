@@ -1,6 +1,9 @@
 from authlib.integrations.starlette_client import OAuth
-from fastapi import HTTPException, Request
+from fastapi import Depends, HTTPException, Request
+from sqlalchemy.orm import Session
+from config.database import get_db
 from config.settings import settings
+from core.user import get_session
 
 oauth = OAuth()
 
@@ -14,11 +17,13 @@ oauth.register(
 )
 
 
-async def verify_user(request: Request):
+async def verify_user(request: Request, db: Session = Depends(get_db)):
     try:
-        user = request.session.get("user")
-        if not user:
+        session_id = request.session.get("session")
+        session = get_session(db, session_id)
+        if session:
+            return session
+        else:
             raise
-        return user
     except:
         raise HTTPException(status_code=401, detail="Unauthorized")
