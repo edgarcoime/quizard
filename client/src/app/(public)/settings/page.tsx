@@ -1,7 +1,7 @@
 export default function Page() {
   return (
     <>
-      <h1>Create New Collection page</h1>
+      <h1>Website Settings page</h1>
     </>
   );
 }

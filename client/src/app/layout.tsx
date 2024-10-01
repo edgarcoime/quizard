@@ -38,3 +38,28 @@ export default function RootLayout({
     </html>
   );
 }
+
+/*
+PUBLIC ROUTES: 
+/                                     <- landing page
+/signin                               <- Signin page
+/signup                               <- Signup page
+/cards                                <- Top trending collections
+/id/[userId]                          <- User profile listing all a user's collections
+/id/[userId]/[collectionId]           <- Listing all the cards in that collection
+/id/[userId]/[collectionId]/[cardId]  <- Details the card
+
+PRIVATE ROUTES: 
+// General settings interactions
+/settings                                         <- website settings? Maybe light mode or langauge
+/id/[userId]/settings                             <- User Specific settings (change email, username, etc)
+
+// Collection interactions
+/id/[userId]/new                                  <- Create new collection
+/id/[userId]/[collectionId]/settings              <- Collection settings (reset statistics, etc...)
+/id/[userId]/[collectionId]/statistics            <- Collection statistics
+
+/id/[userId]/[collectionId]/new                   <- New card in specified collection
+/id/[userId]/[collectionId]/[cardId]/settings     <- Card specific settings (reset statistics, etc...)
+/id/[userId]/[collectionId]/[cardId]/statistics   <- Card statistics
+*/
