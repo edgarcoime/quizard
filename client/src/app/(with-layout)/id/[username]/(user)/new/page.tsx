@@ -3,16 +3,14 @@ export default function Page({
 }: {
   params: { username: string; collection: string };
 }) {
-  const { username, collection } = params;
+  const { username } = params;
 
   return (
     <>
       <h1>
-        <strong>CREATE</strong> A page to create a new card in the collection it
-        is associated to
+        <strong>CREATE</strong> a collection that stores all the cards
       </h1>
       <p>Username: {username}</p>
-      <p>Collection: {collection}</p>
     </>
   );
 }

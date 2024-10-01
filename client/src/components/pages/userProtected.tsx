@@ -1,4 +1,6 @@
-export default function UserProtectedLayout({
+"use server";
+
+export default async function UserProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
