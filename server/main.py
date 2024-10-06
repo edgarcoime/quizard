@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter, FastAPI
 from starlette.middleware.sessions import SessionMiddleware
-from routes import auth
+from routes import auth, user
 from config.settings import settings
 from config.database import Base, engine
 
@@ -17,6 +17,7 @@ app.add_middleware(
 
 router = APIRouter(prefix="/api")
 router.include_router(auth.router, prefix="/auth", tags=["auth"])
+router.include_router(user.router, prefix="/user", tags=["user"])
 app.include_router(router)
 
 if __name__ == "__main__":

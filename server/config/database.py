@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime 
 from typing import List
 from sqlalchemy import DateTime, create_engine, func
 from sqlalchemy.orm import Mapped, sessionmaker, relationship, DeclarativeBase, mapped_column
@@ -29,9 +29,9 @@ class User(Base):
 
     id:Mapped[int] = mapped_column(Integer, primary_key=True)
     name:Mapped[str] = mapped_column(String)
-    user_name:Mapped[str] = mapped_column(String, unique=True, index=True)
+    username:Mapped[str] = mapped_column(String, unique=True, index=True)
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     auth_methods:Mapped[List["AuthMethod"]] = relationship("AuthMethod", back_populates="user")
     collections:Mapped[List["Collection"]] = relationship("Collection", back_populates="user")
@@ -46,9 +46,9 @@ class AuthMethod(Base):
     sub:Mapped[str] = mapped_column(String)
     user_id:Mapped[int] = mapped_column(Integer, ForeignKey("user.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
-    user:Mapped["User"] = relationship("User", back_populates="auth_methods")
+    user:Mapped["User"] = relationship("User", back_populates="auth_methods", lazy="joined")
 
 
 class UserSession(Base):
@@ -57,10 +57,10 @@ class UserSession(Base):
     id:Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id:Mapped[int] = mapped_column(Integer, ForeignKey("user.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
     expires_at:Mapped[datetime] = mapped_column(DateTime)
 
-    user:Mapped["User"] = relationship("User", back_populates="sessions")
+    user:Mapped["User"] = relationship("User", back_populates="sessions", lazy="joined")
 
 
 class Collection(Base):
@@ -70,7 +70,7 @@ class Collection(Base):
     title:Mapped[str] = mapped_column(String, index=True)
     user_id:Mapped[int] = mapped_column(Integer, ForeignKey("user.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     user:Mapped["User"] = relationship("User", back_populates="collections")
     cards:Mapped[List["Card"]] = relationship("Card", back_populates="collection")
@@ -83,7 +83,7 @@ class Card(Base):
     question:Mapped[str] = mapped_column(String, primary_key=True)
     collection_id:Mapped[int] = mapped_column(Integer, ForeignKey("collection.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     collection:Mapped["Collection"] = relationship("Collection", back_populates="cards")
     options:Mapped[List["Option"]] = relationship("Option", back_populates="card")
@@ -96,6 +96,6 @@ class Option(Base):
     option:Mapped[str] = mapped_column(String)
     card_id:Mapped[int] = mapped_column(Integer, ForeignKey("card.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     card:Mapped["Card"] = relationship("Card", back_populates="options")

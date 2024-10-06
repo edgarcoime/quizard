@@ -1,8 +1,11 @@
 from fastapi import APIRouter, HTTPException, Request, Depends
 from sqlalchemy.orm import Session
 from config.database import get_db
-from core.auth import oauth, verify_user
-from core.user import create_user, create_session, extend_session, get_user_by_provider
+from core.auth import create_session, delete_session, extend_session, oauth, verify_user
+from core.user import (
+    create_user,
+    get_user_by_provider,
+)
 
 router = APIRouter()
 
@@ -21,7 +24,7 @@ async def auth_callback(provider: str, request: Request, db: Session = Depends(g
         token = await client.authorize_access_token(request)  # type: ignore
         user_info = token.get("userinfo")
 
-        existing_user = get_user_by_provider(db, provider, user_info["sub"]) 
+        existing_user = get_user_by_provider(db, provider, user_info["sub"])
         if existing_user:
             user = existing_user
         else:
@@ -30,7 +33,7 @@ async def auth_callback(provider: str, request: Request, db: Session = Depends(g
             )
 
         if user:
-            old_session_id = request.session.get('session_id')
+            old_session_id = request.session.get("session_id")
             if old_session_id:
                 session = extend_session(db, old_session_id)
             else:
@@ -43,6 +46,12 @@ async def auth_callback(provider: str, request: Request, db: Session = Depends(g
         raise HTTPException(401, "Unauthorized")
 
 
-@router.get("/check")
-async def protected(user=Depends(verify_user)):
-    return {"message": "you are authenticated", "user": user}
+@router.get("/logout")
+async def logout(
+    request: Request, db: Session = Depends(get_db), _=Depends(verify_user)
+):
+    session_id = request.session.get("session_id")
+    delete_session(db, session_id)
+    request.session["session_id"] = None
+
+
