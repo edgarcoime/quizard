@@ -1,9 +1,8 @@
-from datetime import datetime
+from datetime import date, datetime
+from typing import List
 from sqlalchemy import DateTime, create_engine, func
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, sessionmaker, relationship, DeclarativeBase, mapped_column
+from sqlalchemy import ForeignKey, Integer, String
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
@@ -13,8 +12,6 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
-
 
 def get_db():
     db = SessionLocal()
@@ -23,79 +20,82 @@ def get_db():
     finally:
         db.close()
 
+class Base(DeclarativeBase):
+    pass
+
 
 class User(Base):
     __tablename__ = "user"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    user_name = Column(String, unique=True, index=True)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    id:Mapped[int] = mapped_column(Integer, primary_key=True)
+    name:Mapped[str] = mapped_column(String)
+    user_name:Mapped[str] = mapped_column(String, unique=True, index=True)
+    created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
 
-    auth_methods = relationship("AuthMethod", back_populates="user")
-    collections = relationship("Collection", back_populates="user")
-    sessions = relationship("UserSession", back_populates="user")
+    auth_methods:Mapped[List["AuthMethod"]] = relationship("AuthMethod", back_populates="user")
+    collections:Mapped[List["Collection"]] = relationship("Collection", back_populates="user")
+    sessions:Mapped[List["UserSession"]] = relationship("UserSession", back_populates="user")
 
 
 class AuthMethod(Base):
     __tablename__ = "authmethod"
 
-    id = Column(Integer, primary_key=True)
-    provider = Column(String)
-    sub = Column(String)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    id:Mapped[int] = mapped_column(Integer, primary_key=True)
+    provider:Mapped[str] = mapped_column(String)
+    sub:Mapped[str] = mapped_column(String)
+    user_id:Mapped[int] = mapped_column(Integer, ForeignKey("user.id"))
+    created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
 
-    user = relationship("User", back_populates="auth_methods")
+    user:Mapped["User"] = relationship("User", back_populates="auth_methods")
 
 
 class UserSession(Base):
     __tablename__ = "usersession"
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=datetime.now)
-    expires_at = Column(DateTime)
+    id:Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id:Mapped[int] = mapped_column(Integer, ForeignKey("user.id"))
+    created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    expires_at:Mapped[datetime] = mapped_column(DateTime)
 
-    user = relationship("User", back_populates="sessions")
+    user:Mapped["User"] = relationship("User", back_populates="sessions")
 
 
 class Collection(Base):
     __tablename__ = "collection"
 
-    id = Column(Integer, primary_key=True)
-    title = Column(String, index=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    id:Mapped[int] = mapped_column(Integer, primary_key=True)
+    title:Mapped[str] = mapped_column(String, index=True)
+    user_id:Mapped[int] = mapped_column(Integer, ForeignKey("user.id"))
+    created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
 
-    user = relationship("User", back_populates="collections")
-    cards = relationship("Card", back_populates="collection")
+    user:Mapped["User"] = relationship("User", back_populates="collections")
+    cards:Mapped[List["Card"]] = relationship("Card", back_populates="collection")
 
 
 class Card(Base):
     __tablename__ = "card"
 
-    id = Column(Integer, primary_key=True)
-    question = Column(String, primary_key=True)
-    collection_id = Column(Integer, ForeignKey("collection.id"))
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    id:Mapped[int] = mapped_column(Integer, primary_key=True)
+    question:Mapped[str] = mapped_column(String, primary_key=True)
+    collection_id:Mapped[int] = mapped_column(Integer, ForeignKey("collection.id"))
+    created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
 
-    collection = relationship("Collection", back_populates="cards")
-    options = relationship("Option", back_populates="card")
+    collection:Mapped["Collection"] = relationship("Collection", back_populates="cards")
+    options:Mapped[List["Option"]] = relationship("Option", back_populates="card")
 
 
 class Option(Base):
     __tablename__ = "option"
 
-    id = Column(Integer, primary_key=True)
-    option = Column(String)
-    card_id = Column(Integer, ForeignKey("card.id"))
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=datetime.now)
+    id:Mapped[int] = mapped_column(Integer, primary_key=True)
+    option:Mapped[str] = mapped_column(String)
+    card_id:Mapped[int] = mapped_column(Integer, ForeignKey("card.id"))
+    created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=datetime.now)
 
-    card = relationship("Card", back_populates="options")
+    card:Mapped["Card"] = relationship("Card", back_populates="options")
