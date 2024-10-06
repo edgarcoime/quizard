@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request, Depends
 from sqlalchemy.orm import Session
 from config.database import get_db
-from core.auth import create_session, delete_session, extend_session, oauth, verify_user
+from core.auth import create_session, delete_session, extend_session, get_sessions, oauth, verify_user
 from core.user import (
     create_user,
     get_user_by_provider,
@@ -37,11 +37,11 @@ async def auth_callback(provider: str, request: Request, db: Session = Depends(g
             old_session_id = request.session.get("session_id")
             old_session_user = get_user_from_session(db, old_session_id) if old_session_id else None
             if old_session_user and old_session_user.id == user.id:
-                session = extend_session(db, old_session_id)
+                session = extend_session(db, old_session_id, request)
             else:
                 if old_session_user:
                     delete_session(db, old_session_id)
-                session = create_session(db, user_id=user.id)
+                session = create_session(db, user.id, request)
 
             request.session["session_id"] = session.id if session else None
 
@@ -58,5 +58,11 @@ async def logout(
     session_id = request.session.get("session_id")
     delete_session(db, session_id)
     request.session["session_id"] = None
+
+
+@router.get("/sessions")
+async def sessions(db: Session = Depends(get_db), user=Depends(verify_user)):
+    sessions = get_sessions(db, user.id)
+    return sessions
 
 

@@ -1,6 +1,6 @@
 from datetime import datetime 
-from typing import List
-from sqlalchemy import Boolean, DateTime, create_engine, func
+from typing import List, Optional
+from sqlalchemy import Boolean, DateTime, Enum, Float, create_engine, func
 from sqlalchemy.orm import Mapped, sessionmaker, relationship, DeclarativeBase, mapped_column
 from sqlalchemy import ForeignKey, Integer, String
 import uuid
@@ -58,6 +58,8 @@ class UserSession(Base):
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
     user_id:Mapped[str] = mapped_column(String, ForeignKey("user.id"))
+    user_agent: Mapped[str] = mapped_column(String)
+    ip_address: Mapped[str] = mapped_column(String)
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
     expires_at:Mapped[datetime] = mapped_column(DateTime)
@@ -70,6 +72,7 @@ class Collection(Base):
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
     title:Mapped[str] = mapped_column(String, index=True)
+    is_public:Mapped[bool] = mapped_column(Boolean, default=True)
     user_id:Mapped[str] = mapped_column(String, ForeignKey("user.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
@@ -82,13 +85,14 @@ class Card(Base):
     __tablename__ = "card"
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    question:Mapped[str] = mapped_column(String, primary_key=True)
+    question:Mapped[str] = mapped_column(String)
+    question_type:Mapped[str] = mapped_column(Enum('single_select', 'multi_select', 'open_ended'), nullable=False)
     collection_id:Mapped[str] = mapped_column(String, ForeignKey("collection.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     collection:Mapped["Collection"] = relationship("Collection", back_populates="cards")
-    answer:Mapped["Answer"] = relationship("Answer", back_populates="card")
+    answers:Mapped[List["Answer"]] = relationship("Answer", back_populates="card")
     submissions:Mapped[List["Submission"]] = relationship("Submission", back_populates="card")
 
 
@@ -97,20 +101,22 @@ class Answer(Base):
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
     answer:Mapped[str] = mapped_column(String)
+    is_correct:Mapped[bool] = mapped_column(Boolean, default=True)
     card_id:Mapped[str] = mapped_column(String, ForeignKey("card.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
-    card:Mapped["Card"] = relationship("Card", back_populates="answer")
+    card:Mapped["Card"] = relationship("Card", back_populates="answers")
+    submission_answers:Mapped[List["SubmissionAnswer"]] = relationship("SubmissionAnswer", back_populates="answer")
 
 
 class Submission(Base):
     __tablename__ = "submission"
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
-    submission:Mapped[str] = mapped_column(String)
+    text_submission:Mapped[Optional[str]] = mapped_column(String, nullable=True)
     feedback:Mapped[str] = mapped_column(String)
-    rate:Mapped[int] = mapped_column(Integer)
+    score:Mapped[float] = mapped_column(Float)
     card_id:Mapped[str] = mapped_column(String, ForeignKey("card.id"))
     user_id:Mapped[str] = mapped_column(String, ForeignKey("user.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
@@ -118,4 +124,19 @@ class Submission(Base):
 
     card:Mapped["Card"] = relationship("Card", back_populates="submissions")
     user:Mapped["User"] = relationship("User", back_populates="submissions")
+    submission_answers:Mapped[List["SubmissionAnswer"]] = relationship("SubmissionAnswer", back_populates="submission")
+
+
+class SubmissionAnswer(Base):
+    __tablename__ = "submission_answer"
+
+    id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
+    submission_id:Mapped[str] = mapped_column(String, ForeignKey("submission.id"))
+    answer_id:Mapped[str] = mapped_column(String, ForeignKey("answer.id"))
+    created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    submission:Mapped["Submission"] = relationship("Submission", back_populates="submission_answers")
+    answer:Mapped["Answer"] = relationship("Answer", back_populates="submission_answers")
+
 
