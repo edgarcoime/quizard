@@ -3,7 +3,7 @@ from fastapi import APIRouter, FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from routes import auth
 from config.settings import settings
-from config.database import Base, engine, SessionLocal
+from config.database import Base, engine
 
 Base.metadata.create_all(bind=engine)
 
