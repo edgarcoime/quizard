@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import and_
 from config.database import AuthMethod, User, UserSession
 import uuid
 
@@ -24,7 +25,7 @@ def create_user(db: Session, name, provider, sub):
 def get_user_by_provider(db: Session, provider, sub):
     authMethods = (
         db.query(AuthMethod)
-        .filter(AuthMethod.provider == provider and AuthMethod.sub == sub)
+        .filter(and_(AuthMethod.provider == provider, AuthMethod.sub == sub))
         .first()
     )
     if authMethods:

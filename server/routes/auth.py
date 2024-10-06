@@ -5,6 +5,7 @@ from core.auth import create_session, delete_session, extend_session, oauth, ver
 from core.user import (
     create_user,
     get_user_by_provider,
+    get_user_from_session,
 )
 
 router = APIRouter()
@@ -34,15 +35,19 @@ async def auth_callback(provider: str, request: Request, db: Session = Depends(g
 
         if user:
             old_session_id = request.session.get("session_id")
-            if old_session_id:
+            old_session_user = get_user_from_session(db, old_session_id) if old_session_id else None
+            if old_session_user and old_session_user.id == user.id:
                 session = extend_session(db, old_session_id)
             else:
+                if old_session_user:
+                    delete_session(db, old_session_id)
                 session = create_session(db, user_id=user.id)
 
             request.session["session_id"] = session.id if session else None
 
         return user
-    except:
+    except Exception as e:
+        print(e)
         raise HTTPException(401, "Unauthorized")
 
 
