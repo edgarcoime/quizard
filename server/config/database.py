@@ -78,7 +78,7 @@ class Collection(Base):
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     user:Mapped["User"] = relationship("User", back_populates="collections")
-    cards:Mapped[List["Card"]] = relationship("Card", back_populates="collection")
+    cards:Mapped[List["Card"]] = relationship("Card", back_populates="collection", cascade="all,delete")
 
 
 class Card(Base):
@@ -92,8 +92,8 @@ class Card(Base):
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     collection:Mapped["Collection"] = relationship("Collection", back_populates="cards")
-    answers:Mapped[List["Answer"]] = relationship("Answer", back_populates="card")
-    submissions:Mapped[List["Submission"]] = relationship("Submission", back_populates="card")
+    answers:Mapped[List["Answer"]] = relationship("Answer", back_populates="card", cascade="all,delete")
+    submissions:Mapped[List["Submission"]] = relationship("Submission", back_populates="card", cascade="all,delete")
 
 
 class Answer(Base):
@@ -107,7 +107,7 @@ class Answer(Base):
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     card:Mapped["Card"] = relationship("Card", back_populates="answers")
-    submission_answers:Mapped[List["SubmissionAnswer"]] = relationship("SubmissionAnswer", back_populates="answer")
+    submission_answers:Mapped[List["SubmissionAnswer"]] = relationship("SubmissionAnswer", back_populates="answer", cascade="all,delete")
 
 
 class Submission(Base):
@@ -115,8 +115,8 @@ class Submission(Base):
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
     text_submission:Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    feedback:Mapped[str] = mapped_column(String)
-    score:Mapped[float] = mapped_column(Float)
+    feedback:Mapped[str] = mapped_column(String, nullable=True)
+    score:Mapped[float] = mapped_column(Float, nullable=True)
     card_id:Mapped[str] = mapped_column(String, ForeignKey("card.id"))
     user_id:Mapped[str] = mapped_column(String, ForeignKey("user.id"))
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
@@ -124,7 +124,7 @@ class Submission(Base):
 
     card:Mapped["Card"] = relationship("Card", back_populates="submissions")
     user:Mapped["User"] = relationship("User", back_populates="submissions")
-    submission_answers:Mapped[List["SubmissionAnswer"]] = relationship("SubmissionAnswer", back_populates="submission")
+    submission_answers:Mapped[List["SubmissionAnswer"]] = relationship("SubmissionAnswer", back_populates="submission", cascade="all,delete")
 
 
 class SubmissionAnswer(Base):

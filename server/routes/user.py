@@ -17,7 +17,7 @@ class UserUpdateRequest(BaseModel):
 @router.get("/{user_id}")
 def get(user_id: str, db=Depends(get_db), user=Depends(verify_user)):
     try:
-        target = user.id if user_id == "me" else int(user_id)
+        target = user.id if user_id == "me" else user_id
         return get_user_by_id(db, target)
     except:
         raise HTTPException(400)
