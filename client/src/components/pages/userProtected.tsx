@@ -1,5 +1,6 @@
 "use server";
 
+// Should be able to access cookies here
 export default async function UserProtectedLayout({
   children,
 }: Readonly<{
