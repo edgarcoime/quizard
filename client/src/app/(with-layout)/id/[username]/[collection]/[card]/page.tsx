@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,12 +13,14 @@ export default function Page({
 }: {
   params: { username: string; collection: string; card: string };
 }) {
-  const { username, collection, card: cardId } = params;
+  const { username, collection, card } = params;
 
-  const heading = "Cards";
+  const decodedCollectionId = decodeURIComponent(collection)
+
   const sampleCards = [
     {
       Id: 1,
+      collectionName: "Software Engineering",
       cards: [
         {
           question: "What is coupling?",
@@ -28,13 +31,14 @@ export default function Page({
           answer: "Diagram that shows the relationships between classes",
         },
         {
-          question: "Wh is a sequence diagram unique?",
+          question: "Why is a sequence diagram unique?",
           answer: "Show the time flow of a program",
         },
       ],
     },
     {
       Id: 2,
+      collectionName: "Calculus",
       cards: [
         {
           question: "What does a derivative represent?",
@@ -44,6 +48,7 @@ export default function Page({
     },
     {
       Id: 3,
+      collectionName: "Operating Systems",
       cards: [
         {
           question: "What does SMP stand for?",
@@ -53,6 +58,7 @@ export default function Page({
     },
     {
       Id: 4,
+      collectionName: "Network Security",
       cards: [
         {
           question: "What does a firewall do?",
@@ -64,42 +70,44 @@ export default function Page({
 
   let list_of_cards: any = [];
   sampleCards.map((cardcollection) => {
-    if (cardcollection.Id == Number(cardId)) {
-      cardcollection.cards.map((card: any, index) =>
-        list_of_cards.push(create_card(index, card.question, card.answer)),
+    if (cardcollection.collectionName == decodedCollectionId) {
+      cardcollection.cards.map((card_in_list: any, index) => {
+        if(index  == Number(card)){
+          list_of_cards.push(create_card(card_in_list.question, card_in_list.answer))
+        }
+      }
       );
     }
   });
 
   return (
     <>
+    <div className="flex justify-between items-start p-4">
       <h1>Displays page for specific card and perhaps shows statistics</h1>
       <p>Username: {username}</p>
-      <p>Collection: {collection}</p>
-      <p>Card: {cardId}</p>
+      <p>Collection: {decodedCollectionId}</p>
+      <p>Card: {card}</p>
+      <Button className=" p-4 bg-slate-300" variant="outline"> Settings </Button>
+    </div>
+      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">{list_of_cards}</div>
 
-      <div>
-        <h1 className="flex flex-row justify-center m-5 text-5xl ">
-          {heading}
-        </h1>
-
-        <div className="flex flex-col justify-center">{list_of_cards}</div>
-      </div>
     </>
   );
 }
 
-function create_card(id: number, question: String, answer: String) {
+function create_card( question: String, answer: String) {
   return (
     <>
-      <Card key={id} className="m-8 p-8 bg-slate-300 w-[350px]">
-        <CardTitle className=" flex flex-row justify-center mb-5">
+      <Card className="w-full sm:w-auto max-w-2xl p-12 bg-slate-300 flex flex-col justify-center items-center shadow-lg">
+        <CardTitle className="text-center text-3xl font-bold">
           {question}
         </CardTitle>
-        <CardContent className=" flex flex-row justify-center ">
+        <CardContent className="text-center text-xl mt-4">
           {answer}
         </CardContent>
       </Card>
+
     </>
   );
 }
+
