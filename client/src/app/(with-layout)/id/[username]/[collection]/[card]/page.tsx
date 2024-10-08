@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import SettingsButton from "@/components/ui/settingsButton";
 
 export default function Page({
   params,
@@ -15,7 +16,7 @@ export default function Page({
 }) {
   const { username, collection, card } = params;
 
-  const decodedCollectionId = decodeURIComponent(collection)
+  const decodedCollectionId = decodeURIComponent(collection);
 
   const sampleCards = [
     {
@@ -72,42 +73,38 @@ export default function Page({
   sampleCards.map((cardcollection) => {
     if (cardcollection.collectionName == decodedCollectionId) {
       cardcollection.cards.map((card_in_list: any, index) => {
-        if(index  == Number(card)){
-          list_of_cards.push(create_card(card_in_list.question, card_in_list.answer))
+        if (index == Number(card)) {
+          list_of_cards.push(
+            create_card(card_in_list.question, card_in_list.answer),
+          );
         }
-      }
-      );
+      });
     }
   });
 
+  const settingsRoute = `/id/${username}/${collection}/${card}/settings`;
+
   return (
     <>
-    <div className="flex justify-between items-start p-4">
-      <h1>Displays page for specific card and perhaps shows statistics</h1>
-      <p>Username: {username}</p>
-      <p>Collection: {decodedCollectionId}</p>
-      <p>Card: {card}</p>
-      <Button className=" p-4 bg-slate-300" variant="outline"> Settings </Button>
-    </div>
-      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">{list_of_cards}</div>
-
+      <div className="flex justify-end p-4">
+        <SettingsButton desc="Card Settings" routeRedirect={settingsRoute} />
+      </div>
+      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
+        {list_of_cards}
+      </div>
     </>
   );
 }
 
-function create_card( question: String, answer: String) {
+function create_card(question: String, answer: String) {
   return (
     <>
       <Card className="w-full sm:w-auto max-w-2xl p-12 bg-slate-300 flex flex-col justify-center items-center shadow-lg">
         <CardTitle className="text-center text-3xl font-bold">
           {question}
         </CardTitle>
-        <CardContent className="text-center text-xl mt-4">
-          {answer}
-        </CardContent>
+        <CardContent className="text-center text-xl mt-4">{answer}</CardContent>
       </Card>
-
     </>
   );
 }
-

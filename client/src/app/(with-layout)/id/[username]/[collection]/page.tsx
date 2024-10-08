@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import SettingsButton from "@/components/ui/settingsButton";
 import Link from "next/link";
 
 export default function Page({
@@ -15,7 +16,7 @@ export default function Page({
   params: { username: string; collection: string };
 }) {
   const { username, collection: collectionId } = params;
-  const decodedCollectionId = decodeURIComponent(collectionId)
+  const decodedCollectionId = decodeURIComponent(collectionId);
   const title = `Collection: ${decodedCollectionId}`;
   const heading = "Cards";
 
@@ -74,35 +75,54 @@ export default function Page({
   sampleCards.map((cardcollection) => {
     if (cardcollection.collectionName == decodedCollectionId) {
       cardcollection.cards.map((card: any, index) =>
-        list_of_cards.push(create_card(username, collectionId, index, card.question, card.answer)),
+        list_of_cards.push(
+          create_card(
+            username,
+            collectionId,
+            index,
+            card.question,
+            card.answer,
+          ),
+        ),
       );
     }
   });
 
+  const settingsRoute = `/id/${username}/${collectionId}/settings`;
+
   return (
-    <>
-    <div className="flex justify-between items-start p-4">
-      <h1>Specific Collection page shows all the cards in collections </h1>
-      <Button className=" p-4 bg-slate-300" variant="outline"> Settings </Button>
+    <div>
+      <div className="flex justify-end p-4">
+        <SettingsButton
+          routeRedirect={settingsRoute}
+          desc="Collection Settings"
+        />
       </div>
       <h1 className="flex flex-row justify-center m-5 text-5xl">{title}</h1>
-      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">{list_of_cards}</div>
-    </>
+      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
+        {list_of_cards}
+      </div>
+    </div>
   );
 }
 
-function create_card(username: String, collectionId:String, id: number, question: String, answer: String) {
+function create_card(
+  username: String,
+  collectionId: String,
+  id: number,
+  question: String,
+  answer: String,
+) {
   return (
     <>
       <Link href={`/id/${username}/${collectionId}/${id.toString()}`}>
-      <Card key={id} className="w-full sm:w-auto p-8 bg-slate-300 flex flex-col justify-center items-center">
-        <CardTitle className="text-center">
-          {question}
-        </CardTitle>
-        <CardContent className="text-center">
-          {answer}
-        </CardContent>
-      </Card>
+        <Card
+          key={id}
+          className="w-full sm:w-auto p-8 bg-slate-300 flex flex-col justify-center items-center"
+        >
+          <CardTitle className="text-center">{question}</CardTitle>
+          <CardContent className="text-center">{answer}</CardContent>
+        </Card>
       </Link>
     </>
   );

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import SettingsButton from "@/components/ui/settingsButton";
 import Link from "next/link";
 
 export default function Page({ params }: { params: { username: string } }) {
@@ -27,11 +28,17 @@ export default function Page({ params }: { params: { username: string } }) {
     );
   });
 
+  const settingsRoute = `/id/${username}/settings`;
+
   return (
-    <>
-      <h1>User: ({username}) public page (Shows all your collections)</h1>
+    <div>
+      <div className="flex justify-end p-4">
+        <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
+      </div>
       <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>
-      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">{list_of_buttons}</div>
-    </>
+      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
+        {list_of_buttons}
+      </div>
+    </div>
   );
 }
