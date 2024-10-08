@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "@/app/globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = localFont({
   // TODO: Find a way to not use relative path for this?
@@ -35,7 +36,8 @@ export default function PublicLayout({
 
         {children}
 
-        {/**/}
+        {/* Speed insights for contentful paint */}
+        <SpeedInsights />
       </body>
     </html>
   );
