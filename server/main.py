@@ -15,7 +15,7 @@ app.add_middleware(
     https_only=os.getenv("ENV", "development") != "development",
 )
 
-router = APIRouter(prefix="/api")
+router = APIRouter(prefix="/api/py")
 router.include_router(auth.router, prefix="/auth", tags=["auth"])
 router.include_router(user.router, prefix="/user", tags=["user"])
 router.include_router(collection.router, prefix="/collection", tags=["collection"])

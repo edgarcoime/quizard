@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "frontend": "next dev",
+    "backend": "chmod +x ../server/setup_backend.sh && ../server/setup_backend.sh",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -31,6 +33,7 @@
     "@types/node": "^20.16.10",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "concurrently": "^9.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
     "postcss": "^8",
