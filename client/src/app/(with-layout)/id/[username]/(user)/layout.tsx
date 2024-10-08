@@ -1,2 +1,2 @@
-import UserProtectedLayout from "@/components/pages/userProtected";
+import UserProtectedLayout from "@/components/partials/userProtected";
 export default UserProtectedLayout;
