@@ -7,13 +7,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function Page({
-  params,
-}: {
-  params: { username: string; collection: string; card: string };
-}) {
-  const { username, collection, card: cardId } = params;
+// interface collectionsParams{
+//     title: String
+// }
 
+function create_card(id: number, question: String, answer: String) {
+  return (
+    <>
+      <Card key={id} className="m-8 p-8 bg-slate-300 w-[350px]">
+        <CardTitle className=" flex flex-row justify-center mb-5">
+          {question}
+        </CardTitle>
+        <CardContent className=" flex flex-row justify-center ">
+          {answer}
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+export default function CardsPage({ params }: { params: { id: number } }) {
   const heading = "Cards";
   const sampleCards = [
     {
@@ -64,7 +77,7 @@ export default function Page({
 
   let list_of_cards: any = [];
   sampleCards.map((cardcollection) => {
-    if (cardcollection.Id == Number(cardId)) {
+    if (cardcollection.Id == Number(params.id)) {
       cardcollection.cards.map((card: any, index) =>
         list_of_cards.push(create_card(index, card.question, card.answer)),
       );
@@ -73,33 +86,9 @@ export default function Page({
 
   return (
     <>
-      <h1>Displays page for specific card and perhaps shows statistics</h1>
-      <p>Username: {username}</p>
-      <p>Collection: {collection}</p>
-      <p>Card: {cardId}</p>
+      <h1 className="flex flex-row justify-center m-5 text-5xl ">{heading}</h1>
 
-      <div>
-        <h1 className="flex flex-row justify-center m-5 text-5xl ">
-          {heading}
-        </h1>
-
-        <div className="flex flex-col justify-center">{list_of_cards}</div>
-      </div>
-    </>
-  );
-}
-
-function create_card(id: number, question: String, answer: String) {
-  return (
-    <>
-      <Card key={id} className="m-8 p-8 bg-slate-300 w-[350px]">
-        <CardTitle className=" flex flex-row justify-center mb-5">
-          {question}
-        </CardTitle>
-        <CardContent className=" flex flex-row justify-center ">
-          {answer}
-        </CardContent>
-      </Card>
+      <div className="flex flex-col justify-center">{list_of_cards}</div>
     </>
   );
 }
