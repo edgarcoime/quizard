@@ -1,8 +1,12 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, HTTPException, Request, Depends
 from sqlalchemy.orm import Session
 from config.database import get_db
-from core.auth import oauth, verify_user
-from core.user import create_user, create_session
+from core.auth import create_session, delete_session, extend_session, get_sessions, oauth, verify_user
+from core.user import (
+    create_user,
+    get_user_by_provider,
+    get_user_from_session,
+)
 
 router = APIRouter()
 
@@ -16,22 +20,49 @@ async def login(provider: str, request: Request):
 
 @router.get("/callback/{provider}")
 async def auth_callback(provider: str, request: Request, db: Session = Depends(get_db)):
-    client = oauth.create_client(provider)
-    token = await client.authorize_access_token(request)  # type: ignore
-    user_info = token.get("userinfo")
+    try:
+        client = oauth.create_client(provider)
+        token = await client.authorize_access_token(request)  # type: ignore
+        user_info = token.get("userinfo")
 
-    user = create_user(
-        db, name=user_info["name"], provider=provider, sub=user_info["sub"]
-    )
+        existing_user = get_user_by_provider(db, provider, user_info["sub"])
+        if existing_user:
+            user = existing_user
+        else:
+            user = create_user(
+                db, name=user_info["name"], provider=provider, sub=user_info["sub"]
+            )
 
-    if user:
-        session = create_session(db, user_id=user.id)
-        print(session.id)
-        request.session["session"] = session.id
+        if user:
+            old_session_id = request.session.get("session_id")
+            old_session_user = get_user_from_session(db, old_session_id) if old_session_id else None
+            if old_session_user and old_session_user.id == user.id:
+                session = extend_session(db, old_session_id, request)
+            else:
+                if old_session_user:
+                    delete_session(db, old_session_id)
+                session = create_session(db, user.id, request)
 
-    return user
+            request.session["session_id"] = session.id if session else None
+
+        return user
+    except Exception as e:
+        print(e)
+        raise HTTPException(401, "Unauthorized")
 
 
-@router.get("/check")
-async def protected(user=Depends(verify_user)):
-    return {"message": "you are authenticated", "user": user}
+@router.get("/logout")
+async def logout(
+    request: Request, db: Session = Depends(get_db), _=Depends(verify_user)
+):
+    session_id = request.session.get("session_id")
+    delete_session(db, session_id)
+    request.session["session_id"] = None
+
+
+@router.get("/sessions")
+async def sessions(db: Session = Depends(get_db), user=Depends(verify_user)):
+    sessions = get_sessions(db, user.id)
+    return sessions
+
+
