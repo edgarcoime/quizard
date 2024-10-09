@@ -8,8 +8,7 @@ export default function GoogleSigninButton() {
   const router = useRouter();
 
   function handleGoogleSignin() {
-    console.log("Google Signin clicked");
-    router.push("/id/johndoe");
+    window.location.href = '/api/py/auth/login/google?redirect_to='+'/id/johndoe'
   }
 
   return (

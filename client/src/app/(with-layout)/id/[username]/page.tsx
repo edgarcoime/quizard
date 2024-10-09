@@ -1,8 +1,20 @@
 import { Button } from "@/components/ui/button";
 import SettingsButton from "@/components/ui/settingsButton";
 import Link from "next/link";
+import { headers } from 'next/headers'
 
-export default function Page({ params }: { params: { username: string } }) {
+// example of server side fetching
+// - since this fetch happens on the nextjs server, header needs to be transported(this will include cookie)
+// - since this request is not on browser, we need to specify the full path of api endpoint. We should create frontend .env with BACKEND_URL
+// - consider spliting this fetching logic into generalized helper function
+async function getData () {
+    // since this fetch happens on the nextjs server, header needs to be transported(this will include cookie)
+    const res = await fetch('http://localhost:3000/api/py/user/me', {credentials: "include", headers: headers()})
+    const data = await res.json()
+    return data
+}
+
+export default async function Page({ params }: { params: { username: string } }) {
   const { username } = params;
 
   const sampleCollections = [
@@ -30,9 +42,12 @@ export default function Page({ params }: { params: { username: string } }) {
 
   const settingsRoute = `/id/${username}/settings`;
 
+  const data = await getData()
+
   return (
     <div>
       <div className="flex justify-end p-4">
+        {data['username']}
         <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
       </div>
       <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>
