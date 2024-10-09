@@ -50,7 +50,7 @@ export default async function Page({ params }: { params: { username: string } })
 
   const settingsRoute = `/id/${username}/settings`;
 
-  const data = await getData()
+  const data = {username: ""}//await getData()
 
   return (
     <div>
