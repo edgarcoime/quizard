@@ -11,18 +11,10 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
-
-app.add_middleware(
     SessionMiddleware,
     secret_key=settings.SESSION_SECRET_KEY,
     max_age=60 * 60 * 24,
-    https_only=True,#os.getenv("ENV", "development") != "development",
+    https_only=os.getenv("ENV", "development") != "development",
     same_site="lax"
 )
 

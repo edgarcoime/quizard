@@ -9,17 +9,9 @@ import {cookies} from 'next/headers'
 // - since this request is from server side, we need to specify full path of api end point(that is what x-origin is for) 
 // - consider extracting this fetching logic into generalized helper function
 async function getData () {
-    try {
-        console.log(`${headers().get('x-origin')}/api/py/user/me`)
-    //const res = await fetch(`${headers().get('x-origin')}/api/py/user/me`, {credentials: "include", headers: headers()})
-    const res = await fetch(`${headers().get('x-origin')}/api/py/user/me`, {credentials: "include", headers: headers()})
-    const data = await res.json()
+    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/py/user/me`, {credentials: "include", headers: headers()})
+    const data = await res.text()
     return data
-    } catch (e) {
-        console.log('catched in fetch')
-        console.log(e)
-
-    }
 }
 
 export default async function Page({ params }: { params: { username: string } }) {
@@ -50,12 +42,12 @@ export default async function Page({ params }: { params: { username: string } })
 
   const settingsRoute = `/id/${username}/settings`;
 
-  const data = {username: ""}//await getData()
+  const data = await getData()
 
   return (
     <div>
       <div className="flex justify-end p-4">
-        {data?.['username']}
+        {data}
         <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
       </div>
       <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>
