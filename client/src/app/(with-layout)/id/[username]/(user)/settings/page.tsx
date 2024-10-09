@@ -13,7 +13,7 @@ export default function Page() {
 
   // Example of client side fetching
   // - since this fetch originate from browser, you don't need to manually add cookie in the request.
-  const [data, setData] = useState<{username: string}>('not loaded yet')
+  const [data, setData] = useState('not loaded yet')
   useEffect(() => {
     (async () => {
         const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/py/user/me`)
