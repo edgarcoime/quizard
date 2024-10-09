@@ -15,7 +15,7 @@ export default function Page() {
   // - since this is a client component, you don't need to pass full api path. Also, you don't need to manually add cookie in the request.
   // - the way im fetching here inside useEffect is just me being lazy. Plz don't follow this pattern as it will fetch 2 times.
   //   we should rather use some react client side library for fetching data ie) useQuery. However, we should avoid client side fetching as much as possible to reduce latency
-  const [data, setData] = useState({})
+  const [data, setData] = useState<{username: string}>({username: 'not loaded'})
   useEffect(() => {
     (async () => {
         const res = await fetch('/api/py/user/me')
@@ -42,7 +42,7 @@ export default function Page() {
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          {data["username"]}
+          {data?.["username"]}
 
           <div className="w-full mb-4 flex items-center justify-center space-x-2">
             {isEditing ? (

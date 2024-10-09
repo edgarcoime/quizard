@@ -2,16 +2,24 @@ import { Button } from "@/components/ui/button";
 import SettingsButton from "@/components/ui/settingsButton";
 import Link from "next/link";
 import { headers } from 'next/headers'
+import {cookies} from 'next/headers'
 
 // example of server side fetching
 // - since this fetch happens on the nextjs server, header needs to be transported(this will include cookie)
-// - since this request is not on browser, we need to specify the full path of api endpoint. We should create frontend .env with BACKEND_URL
-// - consider spliting this fetching logic into generalized helper function
+// - since this request is from server side, we need to specify full path of api end point(that is what x-origin is for) 
+// - consider extracting this fetching logic into generalized helper function
 async function getData () {
-    // since this fetch happens on the nextjs server, header needs to be transported(this will include cookie)
-    const res = await fetch('http://localhost:3000/api/py/user/me', {credentials: "include", headers: headers()})
+    try {
+        console.log(`${headers().get('x-origin')}/api/py/user/me`)
+    //const res = await fetch(`${headers().get('x-origin')}/api/py/user/me`, {credentials: "include", headers: headers()})
+    const res = await fetch(`${headers().get('x-origin')}/api/py/user/me`, {credentials: "include", headers: headers()})
     const data = await res.json()
     return data
+    } catch (e) {
+        console.log('catched in fetch')
+        console.log(e)
+
+    }
 }
 
 export default async function Page({ params }: { params: { username: string } }) {
@@ -47,7 +55,7 @@ export default async function Page({ params }: { params: { username: string } })
   return (
     <div>
       <div className="flex justify-end p-4">
-        {data['username']}
+        {data?.['username']}
         <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
       </div>
       <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>

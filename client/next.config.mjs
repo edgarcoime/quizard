@@ -7,7 +7,7 @@ const nextConfig = {
     return [
       {
         source: "/api/py/:path*",
-        destination: process.env.NODE_ENV === "development" ? "http://localhost:8000/api/py/:path*" : "/api/"
+        destination: `http://${process.env.NODE_ENV === "development" ? "localhost:8000" : "nginx"}/api/py/:path*`
       }
     ]
   }
