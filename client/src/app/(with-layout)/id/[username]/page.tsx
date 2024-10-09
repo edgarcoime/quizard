@@ -1,8 +1,18 @@
 import { Button } from "@/components/ui/button";
 import SettingsButton from "@/components/ui/settingsButton";
 import Link from "next/link";
+import { headers } from 'next/headers'
+import {cookies} from 'next/headers'
 
-export default function Page({ params }: { params: { username: string } }) {
+// example of server side fetching
+// - Since this fetch originate from the nextjs server, header needs to be transported so backend can identify the user
+async function getData () {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/py/user/me`, {credentials: "include", headers: headers()})
+    const data = await res.text()
+    return data
+}
+
+export default async function Page({ params }: { params: { username: string } }) {
   const { username } = params;
 
   const sampleCollections = [
@@ -30,9 +40,12 @@ export default function Page({ params }: { params: { username: string } }) {
 
   const settingsRoute = `/id/${username}/settings`;
 
+  const data = await getData()
+
   return (
     <div>
       <div className="flex justify-end p-4">
+        {data}
         <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
       </div>
       <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>
