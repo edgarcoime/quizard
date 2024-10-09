@@ -2,3 +2,5 @@
 .virtual
 .DS_Store
 __pycache__
+dhparam
+ssl_renew.sh
