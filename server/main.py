@@ -4,7 +4,6 @@ from starlette.middleware.sessions import SessionMiddleware
 from routes import answer, auth, card, collection, submission, user
 from config.settings import settings
 from config.database import Base, engine
-from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)
 

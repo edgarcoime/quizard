@@ -5,9 +5,7 @@ import { headers } from 'next/headers'
 import {cookies} from 'next/headers'
 
 // example of server side fetching
-// - since this fetch happens on the nextjs server, header needs to be transported(this will include cookie)
-// - since this request is from server side, we need to specify full path of api end point(that is what x-origin is for) 
-// - consider extracting this fetching logic into generalized helper function
+// - Since this fetch originate from the nextjs server, header needs to be transported so backend can identify the user
 async function getData () {
     const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/py/user/me`, {credentials: "include", headers: headers()})
     const data = await res.text()
