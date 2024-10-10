@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { fetchUserData } from "./lib/api/userData";
 import { headers, cookies } from "next/headers";
-import { permanentRedirect } from "next/navigation";
-import { NEXT_API_BASE_URL } from "./constants";
 
 // Middleware has to reroute the following routes
 //  /id/:username/settings

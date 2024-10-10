@@ -2,7 +2,7 @@
 
 import { fetchUserData } from "@/lib/api/userData";
 import SettingsButton from "../ui/settingsButton";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 

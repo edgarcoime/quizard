@@ -1,8 +1,5 @@
 import CollectionView from "./CollectionsView";
-import UserCollectionCardSettings, {
-  Fallback,
-} from "@/components/partials/UserCollectionCardSettings";
-import { Suspense } from "react";
+import UserCollectionCardSettings from "@/components/partials/UserCollectionCardSettings";
 
 // Get Collection data here on the top level
 // SERVER SIDE fetching
