@@ -13,7 +13,7 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=settings.SESSION_SECRET_KEY,
     max_age=60 * 60 * 24,
-    https_only=os.getenv("ENV", "development") != "development",
+    https_only=settings.HOST.startswith("https"),
     same_site="lax"
 )
 
