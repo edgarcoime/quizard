@@ -1,4 +1,4 @@
-import CollectionView from "./CollectionView";
+import CollectionView from "./CollectionsView";
 import UserCollectionCardSettings, {
   Fallback,
 } from "@/components/partials/UserCollectionCardSettings";

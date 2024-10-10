@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { fetchUserData } from "./lib/api/userData";
 import { headers, cookies } from "next/headers";
 import { permanentRedirect } from "next/navigation";
+import { NEXT_API_BASE_URL } from "./constants";
 
 // Middleware has to reroute the following routes
 //  /id/:username/settings
@@ -42,6 +43,7 @@ export async function middleware(request: NextRequest) {
   // If user is signedin but going back to signup
   if (!!cookieSession && currentPath.pathname.startsWith("/signup")) {
     console.log("Logged in user request in signup: ", currentPath.pathname);
+
     // Nextjs caches this call
     const data = await fetchUserData({
       credentials: "include",
@@ -51,14 +53,15 @@ export async function middleware(request: NextRequest) {
     // TODO: if user data is invalid delete local storage
     // If data is null then cookie is invalid
     if (!data) {
-      cookieStore.delete(cookieName);
-      return NextResponse.next();
+      const newResponse = NextResponse.next();
+      newResponse.cookies.delete(cookieName);
+      return newResponse;
     }
 
     // TODO: Think about caching userdata here to local storage
     // Cache user data here
 
-    // Cookie is valid
+    //Cookie is valid
     const redirectPath = `/id/${data.username}`;
     return NextResponse.redirect(new URL(redirectPath, request.url));
   }

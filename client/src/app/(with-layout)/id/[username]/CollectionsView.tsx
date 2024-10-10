@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { collections } from "@/lib/samples/data";
 
-export default function CollectionView({ username }: { username: string }) {
+export default function CollectionsView({ username }: { username: string }) {
   return (
     <>
       {collections.map((col, idx) => (
