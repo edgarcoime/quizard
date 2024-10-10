@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import SettingsButton from "@/components/ui/settingsButton";
 import { headers } from "next/headers";
 import CollectionView from "./CollectionView";
+import UserCollectionCardSettings from "@/components/partials/UserCollectionCardSettings";
 
 // example of server side fetching
 // - Since this fetch originate from the nextjs server, header needs to be transported so backend can identify the user
@@ -27,10 +28,7 @@ export default async function Page({
 
   return (
     <div>
-      <div className="flex justify-end p-4">
-        {data}
-        <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
-      </div>
+      <UserCollectionCardSettings />
       <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>
       <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
         <CollectionView username={username} />
