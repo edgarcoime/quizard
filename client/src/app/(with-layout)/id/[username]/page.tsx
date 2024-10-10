@@ -1,19 +1,25 @@
 import CollectionView from "./CollectionView";
-import UserCollectionCardSettings from "@/components/partials/UserCollectionCardSettings";
-import { fetchUserData } from "@/lib/api/fetchUserData";
+import UserCollectionCardSettings, {
+  Fallback,
+} from "@/components/partials/UserCollectionCardSettings";
+import { Suspense } from "react";
 
+// Get Collection data here on the top level
+// SERVER SIDE fetching
 export default async function Page({
   params,
 }: {
   params: { username: string };
 }) {
   const { username } = params;
-  const data = await fetchUserData();
-
   return (
     <div>
-      {JSON.stringify(data, null, 2)}
-      <UserCollectionCardSettings />
+      {/* User card here is not important so this can be STREAMED */}
+      {/* https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#sequential-data-fetching */}
+      <Suspense fallback={<Fallback />}>
+        <UserCollectionCardSettings />
+      </Suspense>
+
       <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>
       <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
         <CollectionView username={username} />
