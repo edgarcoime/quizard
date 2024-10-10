@@ -11,7 +11,8 @@ export function Fallback() {
 // WARN: Don't add async as it will error out
 export default async function UserCollectionCardSettings() {
   const username = "johndoe";
-  const data = await fetchUserData();
+  const data = {};
+  //const data = await fetchUserData();
 
   const router = useRouter();
   const currentPath = usePathname();
