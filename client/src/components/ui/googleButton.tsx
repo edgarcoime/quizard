@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { API_BASE_URL } from "@/constants";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 
@@ -8,7 +9,9 @@ export default function GoogleSigninButton() {
   const router = useRouter();
 
   function handleGoogleSignin() {
-    window.location.href = '/api/py/auth/login/google?redirect_to='+'/id/johndoe'
+    // Redirect back to signup
+    // Then middleware will reroute to correct page
+    window.location.href = `${API_BASE_URL}/auth/login/google?redirect_to=/signup`;
   }
 
   return (
