@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { fetchUserData } from "./lib/api/userData";
 import { headers, cookies } from "next/headers";
+import { permanentRedirect } from "next/navigation";
 
 // Middleware has to reroute the following routes
 //  /id/:username/settings

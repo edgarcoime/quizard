@@ -4,6 +4,7 @@ import { fetchUserData } from "@/lib/api/userData";
 import SettingsButton from "../ui/settingsButton";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 // Custom hook to fetch data
 async function getUserData() {
@@ -28,22 +29,22 @@ export default function UserCollectionCardSettings() {
     queryKey: ["user"],
   });
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   if (isLoading) return <Fallback />;
   if (isError) return <ErrorView />;
 
-  const username = data.username;
-  const router = useRouter();
   const currentPath = usePathname();
-
   const settingsRoute = `${currentPath}/settings`;
 
   return (
     <div className="flex justify-end p-4">
-      {JSON.stringify(data, null, 2)}
-      {/* Public */}
-
       {/* User Settings for authorized */}
-      <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
+      {!!data && (
+        <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
+      )}
     </div>
   );
 }
