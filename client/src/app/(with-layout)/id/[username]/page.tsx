@@ -14,11 +14,7 @@ export default async function Page({
   const { username } = params;
   return (
     <div>
-      {/* User card here is not important so this can be STREAMED */}
-      {/* https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#sequential-data-fetching */}
-      <Suspense fallback={<Fallback />}>
-        <UserCollectionCardSettings />
-      </Suspense>
+      <UserCollectionCardSettings />
 
       <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>
       <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
