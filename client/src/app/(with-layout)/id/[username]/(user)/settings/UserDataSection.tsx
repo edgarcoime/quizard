@@ -4,6 +4,7 @@ import useUserData from "@/components/hooks/useUserData";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { generateRandomUsername } from "@/lib/api/generateRandomUsername";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useEffect, useState } from "react";
 import { FiEdit } from "react-icons/fi";
@@ -31,6 +32,7 @@ export default function UserDataSection() {
   useEffect(() => {
     if (!isLoading && !isError && data?.username) {
       setUsername(data.username);
+      console.log(generateRandomUsername());
     }
   }, [data, isLoading, isError]);
 
