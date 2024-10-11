@@ -43,10 +43,13 @@ export async function middleware(request: NextRequest) {
     console.log("Logged in user request in signup: ", currentPath.pathname);
 
     // Nextjs caches this call
-    const data = await fetchUserData({
+    const cookie = headers().get('cookie')
+    const data = await fetchUserData(cookie ? {
       credentials: "include",
-      headers: headers(),
-    });
+      headers: {
+        Cookie: cookie
+      },
+    } : {});
 
     // TODO: if user data is invalid delete local storage
     // If data is null then cookie is invalid

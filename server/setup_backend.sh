@@ -8,7 +8,7 @@ cd "$SCRIPT_DIR"
 setup_environment() {
     if [ ! -d ".virtual" ]; then
         echo "Virtual environment not found. Creating virtual environment..."
-        python -m venv .virtual
+        python3 -m venv .virtual
 
         if [ $? -ne 0 ]; then
             echo "Error creating virtual environment. Make sure Python is installed."
