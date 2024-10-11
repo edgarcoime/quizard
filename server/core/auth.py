@@ -40,6 +40,7 @@ def get_sessions(db: Session, user_id):
             load_only(
                 UserSession.user_agent,
                 UserSession.ip_address,
+                UserSession.ip_country,
                 UserSession.expires_at,
                 UserSession.updated_at,
             ),
@@ -54,13 +55,14 @@ def get_sessions(db: Session, user_id):
 
 
 def create_session(db: Session, user_id, request: Request):
-    print("==================================================")
-    print(request.headers)
     db_session = UserSession(
         user_id=user_id,
         expires_at=datetime.now(timezone.utc) + timedelta(hours=24),
-        ip_address=request.client.host if request.client else None,
-        user_agent=request.headers.get("user-agent"),
+        user_agent=request.headers.get("user-agent") or "",
+
+        # production only field with nginx and cloudflare
+        ip_address=request.headers.get('x-forwarded-for') or "",
+        ip_country=request.headers.get("cf-ipcountry") or "",
     )
     db.add(db_session)
     db.commit()
@@ -71,12 +73,13 @@ def create_session(db: Session, user_id, request: Request):
 
 def extend_session(db: Session, session_id, request: Request):
     old_session = db.query(UserSession).filter(UserSession.id == session_id).first()
-    print("==================================================")
-    print(request.headers)
     if old_session:
         old_session.expires_at = datetime.now(timezone.utc) + timedelta(hours=24)
-        old_session.ip_address = request.client.host if request.client else ""
         old_session.user_agent = request.headers.get("user-agent") or ""
+
+        # production only field with nginx and cloudflare
+        old_session.ip_address = request.headers.get('x-forwarded-for') or ""
+        old_session.ip_country = request.headers.get("cf-ipcountry") or ""
 
         db.commit()
         db.refresh(old_session)

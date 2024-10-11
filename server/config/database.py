@@ -60,6 +60,7 @@ class UserSession(Base):
     user_id:Mapped[str] = mapped_column(String, ForeignKey("user.id"))
     user_agent: Mapped[str] = mapped_column(String)
     ip_address: Mapped[str] = mapped_column(String)
+    ip_country: Mapped[str] = mapped_column(String)
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
     expires_at:Mapped[datetime] = mapped_column(DateTime)

@@ -14,7 +14,7 @@ router = APIRouter()
 class SubmittionCreateRequest(BaseModel):
     card_id: str
     text_submission: Optional[str] = None
-    answer_ids: Optional[List[str]] = None
+    answer_ids: Optional[List[str]] = []
 
 
 @router.put("")
