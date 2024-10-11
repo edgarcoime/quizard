@@ -54,6 +54,8 @@ def get_sessions(db: Session, user_id):
 
 
 def create_session(db: Session, user_id, request: Request):
+    print("==================================================")
+    print(request.headers)
     db_session = UserSession(
         user_id=user_id,
         expires_at=datetime.now(timezone.utc) + timedelta(hours=24),
@@ -69,6 +71,8 @@ def create_session(db: Session, user_id, request: Request):
 
 def extend_session(db: Session, session_id, request: Request):
     old_session = db.query(UserSession).filter(UserSession.id == session_id).first()
+    print("==================================================")
+    print(request.headers)
     if old_session:
         old_session.expires_at = datetime.now(timezone.utc) + timedelta(hours=24)
         old_session.ip_address = request.client.host if request.client else ""
