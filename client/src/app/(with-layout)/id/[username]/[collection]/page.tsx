@@ -15,7 +15,7 @@ export default function Page({
 
   return (
     <div>
-      <UserCollectionCardSettings />
+      <UserCollectionCardSettings description="Collection Settings" />
 
       <h1 className="flex flex-row justify-center m-5 text-5xl">{title}</h1>
       <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">

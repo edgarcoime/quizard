@@ -1,39 +1,28 @@
 "use client";
 
-import { fetchUserData } from "@/lib/api/userData";
 import SettingsButton from "../ui/settingsButton";
 import { usePathname } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-
-// Custom hook to fetch data
-async function getUserData() {
-  const data = await fetchUserData();
-  return data;
-}
-
-// Loading component
-function Fallback() {
-  return <div className="flex justify-end p-4">loading...</div>;
-}
+import useUserData from "../hooks/useUserData";
 
 // Error component
 function ErrorView() {
   return <p>There was an error fetching permissions.</p>;
 }
 
+// Loading component
+function LoadingView() {
+  return <div className="flex justify-end p-4">loading...</div>;
+}
+
 // WARN: Don't add async as it will error out
-export default function UserCollectionCardSettings() {
-  const { data, isLoading, isError } = useQuery({
-    queryFn: async () => await getUserData(),
-    queryKey: ["user"],
-  });
+export default function UserCollectionCardSettings({
+  description,
+}: {
+  description: string;
+}) {
+  const { data, isLoading, isError } = useUserData();
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  if (isLoading) return <Fallback />;
+  if (isLoading) return <LoadingView />;
   if (isError) return <ErrorView />;
 
   const currentPath = usePathname();
@@ -43,7 +32,7 @@ export default function UserCollectionCardSettings() {
     <div className="flex justify-end p-4">
       {/* User Settings for authorized */}
       {!!data && (
-        <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
+        <SettingsButton desc={description} routeRedirect={settingsRoute} />
       )}
     </div>
   );
