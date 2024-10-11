@@ -71,6 +71,7 @@ class Collection(Base):
     __tablename__ = "collection"
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
+    slug:Mapped[str] = mapped_column(String, index=True)
     title:Mapped[str] = mapped_column(String, index=True)
     is_public:Mapped[bool] = mapped_column(Boolean, default=True)
     user_id:Mapped[str] = mapped_column(String, ForeignKey("user.id"))

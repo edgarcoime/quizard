@@ -17,9 +17,13 @@ class SubmittionCreateRequest(BaseModel):
     answer_ids: Optional[List[str]] = None
 
 
-@router.put("/")
+@router.put("")
 def create(submission: SubmittionCreateRequest, db=Depends(get_db), user=Depends(verify_user)):
     db_card = get_card(db, submission.card_id)
-    if db_card and db_card.collection and db_card.collection.user and (db_card.collection.is_public or db_card.collection.user.id == user.id):
-        return create_submission(db, user.id, db_card.id, submission.text_submission, submission.answer_ids)
-    raise HTTPException(401)
+    if db_card and db_card.collection:
+        if db_card.collection.user and (db_card.collection.is_public or db_card.collection.user.id == user.id):
+            return create_submission(db, user.id, db_card.id, submission.text_submission, submission.answer_ids)
+        else:
+            raise HTTPException(401, "You are not authorized to play this flashcard.")
+    else:
+        raise HTTPException(404, "Could not find the card.")

@@ -1,8 +1,10 @@
-
-from sqlalchemy import and_
+from sqlalchemy import and_ 
 from sqlalchemy.orm import Session
-
 from config.database import Collection
+
+
+def get_collection_by_slug(db: Session, user_id, slug):
+    return db.query(Collection).filter(and_(Collection.user_id == user_id, Collection.slug == slug)).first()
 
 
 def get_collection(db: Session, collection_id):
@@ -18,9 +20,10 @@ def get_collections_by_user_id(db: Session, user_id, only_public=True):
     return collections
 
 
-def create_collection(db: Session, user_id, collection_title, is_public):
+def create_collection(db: Session, user_id, slug, collection_title, is_public):
     db_collection = Collection(
         user_id=user_id,
+        slug=slug,
         title=collection_title,
         is_public=is_public
     )
@@ -31,9 +34,11 @@ def create_collection(db: Session, user_id, collection_title, is_public):
     return db_collection
 
 
-def update_collection(db: Session, collection_id, collection_title, is_public):
+def update_collection(db: Session, collection_id, slug, collection_title, is_public):
     db_collection = db.query(Collection).filter(Collection.id == collection_id).first()
     if db_collection:
+        if slug != None:
+            db_collection.slug = slug
         if collection_title != None:
             db_collection.title = collection_title
         if is_public != None:

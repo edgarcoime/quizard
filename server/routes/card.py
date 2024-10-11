@@ -40,24 +40,30 @@ class CardUpdateRequest(BaseModel):
 @router.get("/{card_id}")
 def get(card_id: str, db=Depends(get_db), user=Depends(verify_user)):
     db_card = get_card(db, card_id)
-    if db_card and db_card.collection and (db_card.collection.is_public or db_card.collection.user_id == user.id):
-        card = db_card.__dict__.copy()
+    if db_card and db_card.collection:
+        if (db_card.collection.is_public or db_card.collection.user_id == user.id):
+            card = db_card.__dict__.copy()
 
-        my_submissions = get_submissions(db, card_id, user.id) 
+            my_submissions = get_submissions(db, card_id, user.id) 
 
-        card['my_submissions'] = my_submissions
-        return card
+            card['my_submissions'] = my_submissions
+            return card
+        else:
+            raise HTTPException(404, "You are not authorized to see this card.")
     else:
-        raise HTTPException(401)
+        raise HTTPException(404, "Could not find the card.")
 
 
-@router.put("/")
+@router.put("")
 def create(card: CardCreateRequest, db=Depends(get_db), user=Depends(verify_user)):
     collection = get_collection(db, card.collection_id)
-    if collection and collection.user_id == user.id:
-        return create_card(db, card.collection_id, card.question, card.question_type, card.answers)
+    if collection:
+        if collection.user_id == user.id:
+            return create_card(db, card.collection_id, card.question, card.question_type, card.answers)
+        else:
+            raise HTTPException(401, "You are not authorized to edit this card.")
     else:
-        raise HTTPException(401)
+        raise HTTPException(404, "Could not find the card.")
 
 
 @router.post("/{card_id}")
@@ -66,19 +72,25 @@ def update(card_id: str, card: CardUpdateRequest, db=Depends(get_db), user=Depen
     if card.collection_id:
         target_collection = get_collection(db, card.collection_id)
         if not target_collection or target_collection.user_id != user.id:
-            raise HTTPException(401)
-    if db_card and db_card.collection and db_card.collection.user_id == user.id:
-        return update_card(db, card_id, card.collection_id, card.question, card.question_type)
+            raise HTTPException(401, "You are not authorized to move card to specified collection.")
+    if db_card and db_card.collection:
+        if db_card.collection.user_id == user.id:
+            return update_card(db, card_id, card.collection_id, card.question, card.question_type)
+        else:
+            raise HTTPException(401, "You are not authorized to edit this card.")
     else:
-        raise HTTPException(401)
+        raise HTTPException(404, "Could not find the card")
 
 
 @router.delete("/{card_id}")
 def delete(card_id: str, db=Depends(get_db), user=Depends(verify_user)):
     db_card = get_card(db, card_id)
-    if db_card and db_card.collection and db_card.collection.user_id == user.id:
-        return delete_card(db, card_id)
+    if db_card and db_card.collection:
+        if db_card.collection.user_id == user.id:
+            return delete_card(db, card_id)
+        else:
+            raise HTTPException(401, "You are not authorized to delete this card.")
     else:
-        raise HTTPException(401)
+        raise HTTPException(404, "Could not find the card.")
 
 
