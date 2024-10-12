@@ -1,7 +1,8 @@
 "use server";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import UserDataSection from "./UserDataSection";
+import HistorySection from "./HistorySection";
 
 export default async function Page() {
   return (
@@ -16,11 +17,7 @@ export default async function Page() {
         <CardHeader>
           <CardTitle>History</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">
-            Your previous answers to flashcards will appear here.
-          </p>
-        </CardContent>
+        <HistorySection />
       </Card>
     </div>
   );
