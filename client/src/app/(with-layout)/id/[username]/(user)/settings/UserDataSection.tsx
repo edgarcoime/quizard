@@ -6,6 +6,7 @@ import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { generateRandomUsername } from "@/lib/api/generateRandomUsername";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiEdit } from "react-icons/fi";
 
@@ -28,6 +29,7 @@ export default function UserDataSection() {
   // Hooks have to be declared at the top
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     if (!isLoading && !isError && data?.username) {
@@ -39,6 +41,14 @@ export default function UserDataSection() {
   // Handle Loading state
   if (isLoading) return <LoadingView />;
   if (isError) return <ErrorView />;
+
+  // Ensure url is correct
+  // TODO: might have to be in the router component
+  const truePath = `/id/${data?.username}/settings`;
+  const currentPath = usePathname();
+  if (currentPath !== truePath) {
+    router.push(truePath);
+  }
 
   // Have access to data here now
   const { name } = data!;
