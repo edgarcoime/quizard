@@ -1,9 +1,9 @@
-import SettingsButton from "@/components/ui/settingsButton";
 import CardsView from "./CardsView";
 import UserCollectionCardSettings from "@/components/partials/UserCollectionCardSettings";
 import { IoPlayCircleOutline } from "react-icons/io5"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { IoAdd } from "react-icons/io5";
 
 export default function Page({
   params,
@@ -23,16 +23,14 @@ export default function Page({
       <h1 className="flex flex-row justify-center m-5 text-5xl">{title}</h1>
 
       <div className="flex justify-center">
-      <Link href={playRoute}>
-        <IoPlayCircleOutline className="text-5xl"></IoPlayCircleOutline>
-      </Link>
+        <Link href={playRoute}>
+          <IoPlayCircleOutline className="text-5xl"></IoPlayCircleOutline>
+        </Link>
       </div>
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
         <CardsView username={username} collectionId={decodedCollectionId} />
       </div>
-
-
     </div>
   );
 }
