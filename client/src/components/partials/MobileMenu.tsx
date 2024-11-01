@@ -48,7 +48,7 @@ export default function Navbar() {
             ))}
           </ul>
         </div>
-        <div className={`md:block ${state ? "block" : "hidden"} md:ml-auto md:pr-4`}>
+        <div className={`md:block ${state ? "block" : "hidden"} md:ml-auto md:pr-4 pt-4 sm:pt-0`}>
             <Link href="/" onClick={() => setState(false)} className="text-gray-600 hover:text-red-600 md:mt-0 mt-8">
             Logout
             </Link>
