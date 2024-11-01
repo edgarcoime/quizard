@@ -48,14 +48,10 @@ export default function Navbar() {
             ))}
           </ul>
         </div>
-        {/* Logout Button */}
         <div className={`md:block ${state ? "block" : "hidden"} md:ml-auto md:pr-4`}>
-          <button
-            className="text-gray-600 hover:text-red-600 md:mt-0 mt-8"
-            onClick={() => setState(false)} // Close menu when logout is clicked in mobile view
-          >
+            <Link href="/" onClick={() => setState(false)} className="text-gray-600 hover:text-red-600 md:mt-0 mt-8">
             Logout
-          </button>
+            </Link>
         </div>
       </div>
     </nav>
