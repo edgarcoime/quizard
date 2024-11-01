@@ -1,23 +1,43 @@
 "use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { Menu } from "lucide-react"
+import * as React from "react";
+import Link from "next/link";
+import { Menu } from "lucide-react";
+import { useRouter } from "next/navigation";
 import useUserData from "../hooks/useUserData";
-
-
+import { API_BASE_URL } from "@/constants/api"; 
 
 export default function Navbar() {
-  const [state, setState] = React.useState(false)
-  const {data} = useUserData();
+  const [state, setState] = React.useState(false);
+  const { data } = useUserData();
+  const router = useRouter();
 
-  
   const menus = [
     { title: "Home", path: `/id/${data?.username}` },
     { title: "Collections", path: `/id/${data?.username}` },
     { title: "Profile", path: `/id/${data?.username}/settings` },
     { title: "Settings", path: "/settings" },
-  ]
+  ];
+
+  const handleLogout = async () => {
+    setState(false); 
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: "GET",
+        credentials: "include", 
+      });
+
+      if (response.ok) {
+        localStorage.removeItem("authToken");
+        router.push("/");
+      } else {
+        console.error("Failed to log out");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <nav className="bg-white w-full border-b md:border-0">
@@ -49,11 +69,14 @@ export default function Navbar() {
           </ul>
         </div>
         <div className={`md:block ${state ? "block" : "hidden"} md:ml-auto md:pr-4 pt-4 sm:pt-0`}>
-            <Link href="/" onClick={() => setState(false)} className="text-gray-600 hover:text-red-600 md:mt-0 mt-8">
+          <button
+            onClick={handleLogout}
+            className="text-gray-600 hover:text-red-600 md:mt-0 mt-8"
+          >
             Logout
-            </Link>
+          </button>
         </div>
       </div>
     </nav>
-  )
+  );
 }
