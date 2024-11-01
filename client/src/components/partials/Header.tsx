@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { IoEllipsisHorizontal } from "react-icons/io5";
+import MobileMenu from "./MobileMenu";
 
 export default function Header() {
   const pathname = usePathname();
@@ -59,5 +60,11 @@ export default function Header() {
         </div>
       </div>
     </header>
+  //    <header className="bg-gray-200">
+  //    <div className="bg-gray-500 h-full max-w-screen-xl mx-auto shadow-lg">
+  //      {/* <NavBackButton /> */}
+  //      <MobileMenu/>
+  //    </div>
+  //  </header>
   );
 }
