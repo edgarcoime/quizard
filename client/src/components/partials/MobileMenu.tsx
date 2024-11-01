@@ -13,7 +13,6 @@ export default function Navbar() {
   const router = useRouter();
 
   const menus = [
-    { title: "Home", path: `/id/${data?.username}` },
     { title: "Collections", path: `/id/${data?.username}` },
     { title: "Profile", path: `/id/${data?.username}/settings` },
     { title: "Settings", path: "/settings" },
@@ -63,15 +62,15 @@ export default function Navbar() {
           <ul className="justify-center items-center space-y-8 md:flex md:space-x-6 md:space-y-0">
             {menus.map((item, idx) => (
               <li key={idx} className="text-gray-600 hover:text-indigo-600">
-                <Link href={item.path}>{item.title}</Link>
+                <Link href={item.path} onClick={() => setState(false)}>{item.title}</Link>
               </li>
             ))}
           </ul>
         </div>
-        <div className={`md:block ${state ? "block" : "hidden"} md:ml-auto md:pr-4 pt-4 sm:pt-0`}>
+        <div className={`md:block ${state ? "block" : "hidden"} md:ml-auto md:pr-4 py-4`}>
           <button
             onClick={handleLogout}
-            className="text-gray-600 hover:text-red-600 md:mt-0 mt-8"
+            className="text-white hover:text-red-600 md:mt-0 bg-gray-800 hover:bg-gray-700 p-2 rounded-md"
           >
             Logout
           </button>
