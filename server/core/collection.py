@@ -1,14 +1,22 @@
 from sqlalchemy import and_ 
 from sqlalchemy.orm import Session
 from config.database import Collection
+import re
+
+
+def is_uuid(string: str):
+    return bool(re.compile(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$').match(string))
 
 
 def get_collection_by_slug(db: Session, user_id, slug):
     return db.query(Collection).filter(and_(Collection.user_id == user_id, Collection.slug == slug)).first()
 
 
-def get_collection(db: Session, collection_id):
-    collection = db.query(Collection).filter(Collection.id == collection_id).first()
+def get_collection(db: Session, collection_id_or_slug):
+    if is_uuid(collection_id_or_slug):
+        collection = db.query(Collection).filter(Collection.id == collection_id_or_slug).first()
+    else:
+        collection = db.query(Collection).filter(Collection.slug == collection_id_or_slug).first()
     return collection
 
 

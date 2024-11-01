@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from config.database import get_db
 from core.auth import verify_user
-from core.collection import create_collection, delete_collection, get_collection, get_collection_by_slug, update_collection
+from core.collection import create_collection, delete_collection, get_collection, get_collection_by_slug, is_uuid, update_collection
 
 
 router = APIRouter()
@@ -25,6 +25,8 @@ class CollectionUpdateRequest(BaseModel):
 
 @router.put("")
 def create(collection: CollectionCreateRequest, db=Depends(get_db), user=Depends(verify_user)):
+    if is_uuid(collection.slug):
+        raise HTTPException(400, "Slug cannot be uuid format. Got '{value}'".format(value=collection.slug))
     exist = get_collection_by_slug(db, user.id, collection.slug)
     if exist:
         raise HTTPException(409, "{value} already exists".format(value=collection.slug))
@@ -32,11 +34,13 @@ def create(collection: CollectionCreateRequest, db=Depends(get_db), user=Depends
         return create_collection(db, user.id, collection.slug, collection.title, collection.is_public)
 
 
-@router.post("/{collection_id}")
-def update(collection_id: str, collection: CollectionUpdateRequest, db=Depends(get_db), user=Depends(verify_user)):
-    db_collection = get_collection(db, collection_id)
+@router.post("/{collection_id_or_slug}")
+def update(collection_id_or_slug: str, collection: CollectionUpdateRequest, db=Depends(get_db), user=Depends(verify_user)):
+    db_collection = get_collection(db, collection_id_or_slug)
     if db_collection:
         if collection.slug:
+            if is_uuid(collection.slug):
+                raise HTTPException(400, "Slug cannot be uuid format. Got '{value}'".format(value=collection.slug))
             exist = get_collection_by_slug(db, db_collection.user_id, collection.slug)
             if exist and exist.id != db_collection.id:
                 raise HTTPException(409, "{value} already exists".format(value=collection.slug))
@@ -50,9 +54,9 @@ def update(collection_id: str, collection: CollectionUpdateRequest, db=Depends(g
         raise HTTPException(404, "Could not find the collection.")
 
 
-@router.delete("/{collection_id}")
-def delete(collection_id: str, db=Depends(get_db), user=Depends(verify_user)):
-    db_collection = get_collection(db, collection_id)
+@router.delete("/{collection_id_or_slug}")
+def delete(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_user)):
+    db_collection = get_collection(db, collection_id_or_slug)
     if db_collection:
         if db_collection.user_id == user.id:
             return delete_collection(db, db_collection.id)
@@ -62,9 +66,9 @@ def delete(collection_id: str, db=Depends(get_db), user=Depends(verify_user)):
         raise HTTPException(404, "Could not find the collection.")
 
 
-@router.get("/{collection_id}/cards")
-def get_cards(collection_id: str, db=Depends(get_db), user=Depends(verify_user)):
-    db_collection = get_collection(db, collection_id)
+@router.get("/{collection_id_or_slug}/cards")
+def get_cards(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_user)):
+    db_collection = get_collection(db, collection_id_or_slug)
     if db_collection:
         if db_collection.is_public or db_collection.user_id == user.id:
             return db_collection.cards
