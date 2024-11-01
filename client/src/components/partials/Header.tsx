@@ -1,6 +1,5 @@
 "use client";
 
-import NavBackButton from "./NavBackButton";
 import MobileMenu from "./MobileMenu";
 
 export default function Header() {

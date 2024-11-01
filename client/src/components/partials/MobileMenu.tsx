@@ -43,7 +43,7 @@ export default function Navbar() {
       <div className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
         {/* Logo Section */}
         <div className="flex items-center justify-between py-3 md:py-5 md:block">
-          <Link href="/">
+          <Link href={data ? `/id/${data.username}` : "/"}>
             <h1 className="text-3xl font-bold text-black-500">Quizard</h1>
           </Link>
           {/* Hamburger menu, only shown if user is logged in */}
