@@ -2,8 +2,10 @@ from datetime import datetime
 from typing import List, Optional
 from sqlalchemy import Boolean, DateTime, Enum, Float, create_engine, func
 from sqlalchemy.orm import Mapped, sessionmaker, relationship, DeclarativeBase, mapped_column
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, String
 import uuid
+from sqlalchemy.engine import reflection
+from sqlalchemy.sql import text
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
@@ -12,6 +14,16 @@ engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+engine.connect()
+inspector = reflection.Inspector.from_engine(engine)
+try:
+    columns = [col["name"] for col in inspector.get_columns("User")]
+    if "picture" not in columns:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE User ADD COLUMN picture VARCHAR NULL"))
+except:
+    print("new db")
 
 
 def get_db():
@@ -31,6 +43,7 @@ class User(Base):
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name:Mapped[str] = mapped_column(String)
     username:Mapped[str] = mapped_column(String, unique=True, index=True)
+    picture:Mapped[str] = mapped_column(String, nullable=True)
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 

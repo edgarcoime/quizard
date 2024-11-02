@@ -3,12 +3,13 @@ from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from config.settings import settings
-from config.database import get_db
+from config.database import User, get_db
 from core.auth import create_session, delete_session, extend_session, get_sessions, oauth, verify_user
 from core.user import (
     create_user,
     get_user_by_provider,
     get_user_from_session,
+    update_user,
 )
 from urllib.parse import urlparse, urlunparse
 
@@ -42,9 +43,10 @@ async def auth_callback(provider: str, request: Request, db: Session = Depends(g
         existing_user = get_user_by_provider(db, provider, user_info["sub"])
         if existing_user:
             user = existing_user
+            update_user(db, existing_user.id, User(picture=user_info["picture"]))
         else:
             user = create_user(
-                db, name=user_info["name"], provider=provider, sub=user_info["sub"]
+                db, name=user_info["name"], provider=provider, sub=user_info["sub"], picture=user_info["picture"]
             )
 
         if user:

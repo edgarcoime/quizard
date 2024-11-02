@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { API_BASE_URL } from "@/constants/api";
-import { generateRandomUsername } from "@/lib/api/generateRandomUsername";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -34,7 +33,6 @@ export default function UserDataSection() {
   useEffect(() => {
     if (!isLoading && !isError && data?.username) {
       setUsername(data.username);
-      console.log(generateRandomUsername());
     }
   }, [data, isLoading, isError]);
 
@@ -58,18 +56,12 @@ export default function UserDataSection() {
   };
 
   const handleSaveClick = async () => {
-    const token = localStorage.getItem("authToken");
-
     try {
       const res = await fetch(`${API_BASE_URL}/user/me`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username,
-          name,
+          "username": username
         }),
       });
 
@@ -88,8 +80,8 @@ export default function UserDataSection() {
   return (
     <CardContent className="flex flex-col items-center">
       <Avatar className="h-24 w-24 mb-4">
-        <AvatarImage src="https://github.com/shadcn.png" />
-        <AvatarFallback>CN</AvatarFallback>
+        <AvatarImage src={`${data?.picture}`} />
+        <AvatarFallback>No Image</AvatarFallback>
       </Avatar>
 
       <div className="w-full mb-4 flex items-center justify-center space-x-2">

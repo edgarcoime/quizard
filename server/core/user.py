@@ -9,14 +9,14 @@ def get_user_by_id(db: Session, user_id: str):
     return db.query(User).filter(User.id == user_id).first()
 
 
-def create_user(db: Session, name, provider, sub):
+def create_user(db: Session, name, provider, sub, picture):
     while True:
         username = re.sub(r'(?<!^)(?=[A-Z])', '_', re.sub(r'\d+','',generate_username()[0])).lower()
         exist = db.query(User).filter(User.username == username).first()
         if not exist:
             break
 
-    db_user = User(name=name, username=username)
+    db_user = User(name=name, username=username, picture=picture)
 
     if not db_user.auth_methods:
         db_user.auth_methods = []
@@ -46,11 +46,12 @@ def get_user_from_session(db: Session, session_id):
     return None
 
 
-def update_username(db: Session, user_id, new_user):
+def update_user(db: Session, user_id, new_user):
     user = db.query(User).filter(User.id == user_id).first()
     if user:
         user.username = new_user.username or user.username
         user.name = new_user.name or user.name
+        user.picture = new_user.picture or user.picture
         db.commit()
         db.refresh(user)
     return user
