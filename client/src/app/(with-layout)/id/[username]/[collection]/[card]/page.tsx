@@ -8,14 +8,48 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import SettingsButton from "@/components/ui/settingsButton";
+import fetchCard from "@/lib/api/cardInfo";
+import { fetchCards } from "@/lib/api/collectionCards";
+import { collectionCard } from "@/types/CollectionCard";
 
-export default function Page({}: {
+
+function create_card(question: String, answer: String) {
+  return (
+    <>
+      <Card className="w-full sm:w-auto max-w-2xl p-12 bg-slate-300 flex flex-col justify-center items-center shadow-lg">
+        <CardTitle className="text-center text-3xl font-bold">
+          {question}
+        </CardTitle>
+        <CardContent className="text-center text-xl mt-4">{answer}</CardContent>
+      </Card>
+    </>
+  );
+ }
+
+export default async function Page({params }: {
   params: { username: string; collection: string; card: string };
 }) {
+
+  const { username, collection, card } = params;
+  const decodedCollectionId = decodeURIComponent(collection);
+  const settingsRoute = `/id/${username}/${collection}/${card}/settings`;
+
+  let cardInfo = await fetchCard(card)
+  console.log(cardInfo)
+  let cardTile = create_card(cardInfo.question, cardInfo.answers[0].answer);
+
+
+
   return (
-    <div>
-      <h1>card view</h1>
-    </div>
+    <>
+      <div className="flex justify-end p-4">
+        <SettingsButton desc="Card Settings" routeRedirect={settingsRoute} />
+      </div>
+      
+      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
+        {cardTile}
+      </div>
+    </>
   );
 }
 
