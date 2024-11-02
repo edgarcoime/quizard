@@ -15,17 +15,6 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-engine.connect()
-inspector = reflection.Inspector.from_engine(engine)
-try:
-    columns = [col["name"] for col in inspector.get_columns("User")]
-    if "picture" not in columns:
-        with engine.connect() as conn:
-            conn.execute(text("ALTER TABLE User ADD COLUMN picture VARCHAR NULL"))
-except:
-    print("new db")
-
-
 def get_db():
     db = SessionLocal()
     try:
@@ -71,9 +60,9 @@ class UserSession(Base):
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
     user_id:Mapped[str] = mapped_column(String, ForeignKey("user.id"))
-    user_agent: Mapped[str] = mapped_column(String)
-    ip_address: Mapped[str] = mapped_column(String)
-    ip_country: Mapped[str] = mapped_column(String)
+    user_agent:Mapped[str] = mapped_column(String, nullable=True)
+    browser_name:Mapped[str] = mapped_column(String, nullable=True)
+    device_model:Mapped[str] = mapped_column(String, nullable=True)
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
     expires_at:Mapped[datetime] = mapped_column(DateTime)

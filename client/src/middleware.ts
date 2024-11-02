@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, userAgent } from "next/server";
 import type { NextRequest } from "next/server";
 import { fetchUserData } from "./lib/api/userData";
 import { headers, cookies } from "next/headers";
@@ -20,6 +20,17 @@ function isUserPath(path: string) {
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
+  if (/\/api\/py/.test(request.url)) {
+    const { ua, browser: { name: browserName }, device: { model: deviceModel } } = userAgent(request)
+    if (ua != "node") {
+      const requestHeaders = new Headers(request.headers)
+      requestHeaders.set("X-user-agent", ua ?? "")
+      requestHeaders.set("X-browser-name", browserName ?? "")
+      requestHeaders.set("X-device-model", deviceModel ?? "")
+      return NextResponse.next({ request: { headers: requestHeaders } })
+    }
+  }
+
   const currentPath = request.nextUrl.clone();
 
   // Grab cookie and check for permissions
@@ -74,5 +85,5 @@ export async function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  matcher: "/((?!_next/static|_next/image|favicon.ico).*)",
 };

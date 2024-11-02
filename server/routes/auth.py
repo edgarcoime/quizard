@@ -2,9 +2,10 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+from starlette.types import HTTPExceptionHandler
 from config.settings import settings
 from config.database import User, get_db
-from core.auth import create_session, delete_session, extend_session, get_sessions, oauth, verify_user
+from core.auth import create_session, delete_session, extend_session, get_session, get_sessions, oauth, verify_user
 from core.user import (
     create_user,
     get_user_by_provider,
@@ -77,8 +78,25 @@ async def logout(
 
 
 @router.get("/sessions")
-async def sessions(db: Session = Depends(get_db), user=Depends(verify_user)):
-    sessions = get_sessions(db, user.id)
+async def sessions(request: Request, db: Session = Depends(get_db), user=Depends(verify_user)):
+    db_sessions = get_sessions(db, user.id)
+    session_id = request.session.get("session_id")
+    sessions = []
+    for session in db_sessions:
+        s = session.__dict__.copy()
+        s["is_current"] = session.id == session_id
+        sessions.append(s)
     return sessions
+
+@router.delete("/sessions/{session_id}")
+async def session_delete(session_id: str, db: Session = Depends(get_db), user=Depends(verify_user)):
+    db_session = get_session(db, session_id)
+    try:
+        if db_session and db_session.user_id == user.id:
+            delete_session(db, db_session.id)
+        else:
+            raise HTTPException(401, "You are not authorized to delete other user's session")
+    except:
+        raise HTTPException(500, "Something went wrong")
 
 
