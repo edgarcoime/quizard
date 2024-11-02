@@ -37,13 +37,6 @@ def get_sessions(db: Session, user_id):
     db_sessions = (
         db.query(UserSession)
         .options(
-            load_only(
-                UserSession.user_agent,
-                UserSession.ip_address,
-                UserSession.ip_country,
-                UserSession.expires_at,
-                UserSession.updated_at,
-            ),
             lazyload(
                 UserSession.user
             )
@@ -54,15 +47,28 @@ def get_sessions(db: Session, user_id):
     return db_sessions
 
 
+def get_session(db: Session, session_id):
+    db_session = (
+        db.query(UserSession)
+        .options(
+            lazyload(
+                UserSession.user
+            )
+        )
+        .filter(UserSession.id == session_id)
+        .first()
+    )
+    return db_session
+
+
 def create_session(db: Session, user_id, request: Request):
+    print(request.headers)
     db_session = UserSession(
         user_id=user_id,
         expires_at=datetime.now(timezone.utc) + timedelta(hours=24),
-        user_agent=request.headers.get("user-agent") or "",
-
-        # production only field with nginx and cloudflare
-        ip_address=request.headers.get('x-forwarded-for') or "",
-        ip_country=request.headers.get("cf-ipcountry") or "",
+        user_agent=request.headers.get("X-user-agent") or None,
+        device_model=request.headers.get("X-device-model") or None,
+        browser_name=request.headers.get("X-browser-name") or None
     )
     db.add(db_session)
     db.commit()
@@ -75,11 +81,9 @@ def extend_session(db: Session, session_id, request: Request):
     old_session = db.query(UserSession).filter(UserSession.id == session_id).first()
     if old_session:
         old_session.expires_at = datetime.now(timezone.utc) + timedelta(hours=24)
-        old_session.user_agent = request.headers.get("user-agent") or ""
-
-        # production only field with nginx and cloudflare
-        old_session.ip_address = request.headers.get('x-forwarded-for') or ""
-        old_session.ip_country = request.headers.get("cf-ipcountry") or ""
+        old_session.user_agent = request.headers.get("X-user-agent") or old_session.user_agent
+        old_session.device_model = request.headers.get("X-device-model") or old_session.device_model
+        old_session.browser_name = request.headers.get("X-browser-name") or old_session.browser_name
 
         db.commit()
         db.refresh(old_session)

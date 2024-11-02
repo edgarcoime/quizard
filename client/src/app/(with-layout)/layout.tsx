@@ -9,7 +9,7 @@ export default function PublicLayout({
   // Global layout here add header/nav and footers
   return (
     // Background
-    <div className="h-screen w-screen bg-slate-500 flex flex-col">
+    <div className="h-screen bg-slate-500 flex flex-col">
       <Header />
 
       {/* Main content */}
