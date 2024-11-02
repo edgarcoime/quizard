@@ -4,6 +4,7 @@ import useUserData from "@/components/hooks/useUserData";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { API_BASE_URL } from "@/constants/api";
 import { generateRandomUsername } from "@/lib/api/generateRandomUsername";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { usePathname, useRouter } from "next/navigation";
@@ -14,7 +15,6 @@ function ErrorView() {
   return <div>Error loading user data.</div>;
 }
 
-// Cover Page with loading
 function LoadingView() {
   return (
     <div className="h-72 flex flex-col justify-center bg-gray-200">
@@ -24,13 +24,13 @@ function LoadingView() {
 }
 
 export default function UserDataSection() {
-  // Async data fetching
   const { data, isLoading, isError } = useUserData();
-  // Hooks have to be declared at the top
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState("");
   const router = useRouter();
+  const currentPath = usePathname();
 
+  // Set username when data is fetched
   useEffect(() => {
     if (!isLoading && !isError && data?.username) {
       setUsername(data.username);
@@ -38,20 +38,16 @@ export default function UserDataSection() {
     }
   }, [data, isLoading, isError]);
 
-  // Handle Loading state
+  // Redirect to the correct URL if needed
+  useEffect(() => {
+    const truePath = `/id/${data?.username}/settings`;
+    if (data?.username && currentPath !== truePath) {
+      router.push(truePath);
+    }
+  }, [data?.username, currentPath, router]);
+
   if (isLoading) return <LoadingView />;
   if (isError) return <ErrorView />;
-
-  // Ensure url is correct
-  // TODO: might have to be in the router component
-  const truePath = `/id/${data?.username}/settings`;
-  const currentPath = usePathname();
-  if (currentPath !== truePath) {
-    router.push(truePath);
-  }
-
-  // Have access to data here now
-  const { name } = data!;
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
@@ -59,6 +55,34 @@ export default function UserDataSection() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
+  };
+
+  const handleSaveClick = async () => {
+    const token = localStorage.getItem("authToken");
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/user/me`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username,
+          name,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update user data");
+      }
+
+      const updatedData = await res.json();
+      setUsername(updatedData.username);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating user data:", error);
+    }
   };
 
   return (
@@ -69,7 +93,7 @@ export default function UserDataSection() {
       </Avatar>
 
       <div className="w-full mb-4 flex items-center justify-center space-x-2">
-        <span className="text-lg">Name: {name}</span>
+        <span className="text-lg">Name: {data?.name}</span>
       </div>
       <div className="w-full mb-4 flex items-center justify-center space-x-2">
         {isEditing ? (
@@ -80,16 +104,18 @@ export default function UserDataSection() {
             placeholder="Enter your display name"
           />
         ) : (
-          <>
-            <span className="text-lg">Username: {username}</span>
-          </>
+          <span className="text-lg">Username: {username}</span>
         )}
         <Button variant="ghost" size="icon" onClick={handleEditClick}>
           <FiEdit />
         </Button>
       </div>
 
-      <Button className="w-full">Save Changes</Button>
+      {isEditing && (
+        <Button className="w-full" onClick={handleSaveClick}>
+          Save Changes
+        </Button>
+      )}
     </CardContent>
   );
 }
