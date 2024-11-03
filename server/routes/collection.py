@@ -12,13 +12,13 @@ router = APIRouter()
 
 
 class CollectionCreateRequest(BaseModel):
-    slug: str = Field(pattern=r'^[a-zA-Z0-9_]{3,20}$')
+    slug: str = Field(pattern=r'^[a-zA-Z0-9-]{3,20}$')
     title: str
     is_public: Optional[bool] = True
 
 
 class CollectionUpdateRequest(BaseModel):
-    slug: Optional[str] = Field(default=None, pattern=r'^[a-zA-Z0-9_]{3,20}$')
+    slug: Optional[str] = Field(default=None, pattern=r'^[a-zA-Z0-9-]{3,20}$')
     title: Optional[str] = None
     is_public: Optional[bool] = None
 
