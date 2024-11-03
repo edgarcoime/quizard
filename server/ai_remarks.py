@@ -43,10 +43,3 @@ def get_ai_remarks(answer_key: str, answer: str):
     except Exception as e:
         print(f"Error during Groq API call: {str(e)}")
         return {'error': 'Something went wrong with the Groq API request'}
-
-# Example usage
-if __name__ == '__main__':
-    answer_key = "The correct answer."
-    answer = "The answer to be graded."
-    result = get_ai_remarks(answer_key, answer)
-    print(result)
