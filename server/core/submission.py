@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
-
+from ai_remarks import get_ai_remarks
 from config.database import Submission, SubmissionAnswer
 from core.answer import get_answer
 from core.card import get_card
@@ -39,8 +39,11 @@ def create_submission(db: Session, user_id, card_id, text_submission, answer_ids
                 score = 0
             db_submission.score = score
         elif db_card.question_type == "open_ended":
-            score = 1
-            feedback = "add AI feedback here"
+            correct_answer_string = [x.answer for x in db_answers if x.is_correct][0]
+            result = get_ai_remarks(correct_answer_string, text_submission)
+           
+            score = float(result['similarity_score']) / 100
+            feedback = result['ai_remarks']
             db_submission.score = score
             db_submission.feedback = feedback
 
