@@ -1,3 +1,5 @@
+import FormSection from "./FormSection";
+
 export default function Page({
   params,
 }: {
@@ -11,6 +13,7 @@ export default function Page({
         <strong>CREATE</strong> a collection that stores all the cards
       </h1>
       <p>Username: {username}</p>
+      <FormSection />
     </>
   );
 }
