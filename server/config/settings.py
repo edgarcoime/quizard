@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
     API_ROUTE_PREFIX: str = ""
     HOST: str = ""
+    GROQ_API_KEY: str = ""
+
 
     class Config:
         env_file = ".env"
