@@ -33,3 +33,4 @@ An AI driven flash card Progressive Web App that helps users consolidate informa
   - GOOGLE_CLIENT_SECRET
   - HOST
     - a url of where this application is hosted. Used when redirecting requests. should be same as frontend NEXT_PUBLIC_HOST. ie) http://localhost:3000 for localhost
+  - GROQ_API_KEY
