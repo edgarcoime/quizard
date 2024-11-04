@@ -1,7 +1,6 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-
 from config.database import get_db
 from core.auth import verify_user
 from core.card import get_card
@@ -18,7 +17,7 @@ class SubmittionCreateRequest(BaseModel):
 
 
 @router.put("")
-def create(submission: SubmittionCreateRequest, db=Depends(get_db), user=Depends(verify_user)):
+def create(submission: SubmittionCreateRequest, db=Depends(get_db), user=Depends(verify_user())):
     db_card = get_card(db, submission.card_id)
     if db_card and db_card.collection:
         if db_card.collection.user and (db_card.collection.is_public or db_card.collection.user.id == user.id):

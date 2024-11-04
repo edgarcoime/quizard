@@ -19,19 +19,23 @@ oauth.register(
     prompt="select_account",
 )
 
-
-async def verify_user(request: Request, db: Session = Depends(get_db)):
-    try:
-        session_id = request.session.get("session_id")
-        user = get_user_from_session(db, session_id)
-        if user:
-            extend_session(db, session_id, request)
-            return user
-        else:
-            raise
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=401, detail="Unauthorized")
+def verify_user(raise_on_error: bool = True):
+    async def inner(request: Request, db: Session = Depends(get_db)):
+        try:
+            session_id = request.session.get("session_id")
+            user = get_user_from_session(db, session_id)
+            if user:
+                extend_session(db, session_id, request)
+                return user
+            else:
+                if raise_on_error: 
+                    raise
+                else:
+                    return None
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=401, detail="Unauthorized")
+    return inner
 
 
 def get_sessions(db: Session, user_id):

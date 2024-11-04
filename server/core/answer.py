@@ -1,6 +1,4 @@
-
 from sqlalchemy.orm import Session
-
 from config.database import Answer
 from core.card import get_card
 

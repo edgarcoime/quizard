@@ -68,16 +68,14 @@ async def auth_callback(provider: str, request: Request, db: Session = Depends(g
 
 
 @router.get("/logout")
-async def logout(
-    request: Request, db: Session = Depends(get_db), _=Depends(verify_user)
-):
+async def logout(request: Request, db: Session = Depends(get_db), _=Depends(verify_user())):
     session_id = request.session.get("session_id")
     delete_session(db, session_id)
     request.session.clear()
 
 
 @router.get("/sessions")
-async def sessions(request: Request, db: Session = Depends(get_db), user=Depends(verify_user)):
+async def sessions(request: Request, db: Session = Depends(get_db), user=Depends(verify_user())):
     db_sessions = get_sessions(db, user.id)
     session_id = request.session.get("session_id")
     sessions = []
@@ -88,7 +86,7 @@ async def sessions(request: Request, db: Session = Depends(get_db), user=Depends
     return sessions
 
 @router.delete("/sessions/{session_id}")
-async def session_delete(session_id: str, db: Session = Depends(get_db), user=Depends(verify_user)):
+async def session_delete(session_id: str, db: Session = Depends(get_db), user=Depends(verify_user())):
     db_session = get_session(db, session_id)
     try:
         if db_session and db_session.user_id == user.id:
