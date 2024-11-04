@@ -3,11 +3,11 @@ import { UserCollection } from "@/types/UserCollection";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
-export async function fetchUserCollection() {
+export async function fetchSingleCollection(collectionSlug: string) {
     let error_message = ""
     const cookie = headers().get("cookie")
 
-    const res = await fetch(API_BASE_URL + "/user/me/collections", cookie ? {
+    const res = await fetch(API_BASE_URL + "/collection/" + collectionSlug, cookie ? {
         credentials: 'include', 
         headers: {
             Cookie: cookie,
@@ -16,7 +16,7 @@ export async function fetchUserCollection() {
 
     if (!res.ok) {
         console.error("API error:", res.status, res.statusText);
-        throw new Error('Something went wrong, fetching a collection!');
+        throw new Error('Something went wrong, fetching a single collection!');
     }
 
     const data = await res.json();

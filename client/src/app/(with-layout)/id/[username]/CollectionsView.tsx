@@ -21,7 +21,7 @@ export default async function CollectionsView({ username, collections }: { usern
   return (
     <>
       { collections && collections.map((col: any, idx: number) => (
-        <Link id={String(idx)} href={`/id/${username}/${col.title}`}>
+        <Link id={String(idx)} href={`/id/${username}/${col.slug}`}>
           <Button
             key={idx}
             className="w-full sm:w-auto p-8 bg-slate-300"

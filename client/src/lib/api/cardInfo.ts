@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/constants";
 import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 
 export default async function fetchCard(cardId:string){
 
@@ -14,12 +15,14 @@ export default async function fetchCard(cardId:string){
 
     if (!res.ok) {
         console.error("API error:", res.status, res.statusText);
-        if(res.status == 404){
-            error_message = "404 Card does not exist! Please double check the collection name"
-        }
-        return { error: error_message };
+        throw new Error('Something went wrong, fetching the card information!');
     }
 
     const data = await res.json();
+
+    if (!data) {
+        notFound();
+    }
+    
     return data;
 }

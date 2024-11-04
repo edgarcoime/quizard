@@ -2,9 +2,10 @@ import { API_BASE_URL } from "@/constants";
 import { headers } from "next/headers";
 import { fetchUserCollection } from "./userCollections";
 import { UserCollection } from "@/types/UserCollection";
+import { notFound } from "next/navigation";
 
 
-export async function fetchCards(collectionName: string) {
+export async function fetchCards(collectionSlug: string) {
     let error_message = ""
     const cookie = headers().get("cookie")
 
@@ -13,7 +14,7 @@ export async function fetchCards(collectionName: string) {
     let collections = await fetchUserCollection()
 
     collections.map((collection: UserCollection) =>{
-        if(collection.title == collectionName){
+        if(collection.slug == collectionSlug){
             collectionId = collection.id
         }
     })
@@ -27,12 +28,14 @@ export async function fetchCards(collectionName: string) {
 
     if (!res.ok) {
         console.error("fetching cards API error:", res.status, res.statusText);
-        if(res.status == 405){
-            error_message = "405 Collection does not exist! Please double check the collection name"
-        }
-        return { error: error_message };
+        throw new Error('Something went wrong, fetching a card!');
     }
 
     const data = await res.json();
+
+    if (!data) {
+        notFound();
+    }
+    
     return data;
 }

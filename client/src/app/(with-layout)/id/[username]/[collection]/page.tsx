@@ -5,20 +5,26 @@ import { IoPlayCircleOutline } from "react-icons/io5"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { fetchCards } from "@/lib/api/collectionCards";
+import { fetchSingleCollection } from "@/lib/api/singleCollection";
+
+
+
 
 export default async function Page({
   params,
 }: {
   params: { username: string; collection: string };
 }) {
-  const { username, collection: collectionId } = params;
-  const decodedCollectionId = decodeURIComponent(collectionId);
-  const title = `Collection: ${decodedCollectionId}`;
+  const { username, collection: collectionSlug } = params;
+  // const decodedCollectionId = decodeURIComponent(collectionId);
 
-  const settingsRoute = `/id/${username}/${collectionId}/settings`;
-  const playRoute = `/id/${username}/${collectionId}/play`
 
-  const data = await fetchCards(decodedCollectionId)
+  const settingsRoute = `/id/${username}/${collectionSlug}/settings`;
+  const playRoute = `/id/${username}/${collectionSlug}/play`
+
+  const data = await fetchCards(collectionSlug)
+  const single_collection = await fetchSingleCollection(collectionSlug)
+  const title = `Collection: ${single_collection.title}`;
   
   return (
     <div>
@@ -35,7 +41,7 @@ export default async function Page({
       </div>
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
-        <CardsView username={username} collectionId={decodedCollectionId} cards={data}/>
+        <CardsView username={username} collectionSlug={collectionSlug} cards={data}/>
       </div>
       </>
     )}
