@@ -2,7 +2,6 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from starlette.types import HTTPExceptionHandler
 from config.settings import settings
 from config.database import User, get_db
 from core.auth import create_session, delete_session, extend_session, get_session, get_sessions, oauth, verify_user
@@ -74,7 +73,7 @@ async def logout(
 ):
     session_id = request.session.get("session_id")
     delete_session(db, session_id)
-    request.session["session_id"] = None
+    request.session.clear()
 
 
 @router.get("/sessions")

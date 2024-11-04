@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from authlib.integrations.starlette_client import OAuth
 from fastapi import Depends, HTTPException, Request
-from sqlalchemy.orm import Session, load_only
+from sqlalchemy import and_
+from sqlalchemy.orm import Session
 from sqlalchemy.orm.strategy_options import lazyload
 from config.database import UserSession, get_db
 from config.settings import settings
@@ -41,7 +42,7 @@ def get_sessions(db: Session, user_id):
                 UserSession.user
             )
         )
-        .filter(UserSession.user_id == user_id)
+        .filter(and_(UserSession.user_id == user_id, UserSession.expires_at > datetime.now(timezone.utc) ))
         .all()
     )
     return db_sessions
@@ -62,7 +63,6 @@ def get_session(db: Session, session_id):
 
 
 def create_session(db: Session, user_id, request: Request):
-    print(request.headers)
     db_session = UserSession(
         user_id=user_id,
         expires_at=datetime.now(timezone.utc) + timedelta(hours=24),

@@ -68,31 +68,33 @@ export async function middleware(request: NextRequest) {
 
     // Nextjs caches this call
     const cookie = headers().get("cookie");
-    const data = await fetchUserData(
-      cookie
-        ? {
+    try {
+      const data = await fetchUserData(
+        cookie
+          ? {
             credentials: "include",
             headers: {
               Cookie: cookie,
             },
           }
-        : {},
-    );
+          : {},
+      );
 
-    // TODO: if user data is invalid delete local storage
-    // If data is null then cookie is invalid
-    if (!data) {
-      const newResponse = NextResponse.next();
-      newResponse.cookies.delete(cookieName);
-      return newResponse;
-    }
+      // TODO: if user data is invalid delete local storage
+      // If data is null then cookie is invalid
+      if (!data) {
+        const newResponse = NextResponse.next();
+        newResponse.cookies.delete(cookieName);
+        return newResponse;
+      }
 
-    // TODO: Think about caching userdata here to local storage
-    // Cache user data here
+      // TODO: Think about caching userdata here to local storage
+      // Cache user data here
 
-    //Cookie is valid
-    const redirectPath = `/id/${data.username}`;
-    return NextResponse.redirect(new URL(redirectPath, request.url));
+      //Cookie is valid
+      const redirectPath = `/id/${data.username}`;
+      return NextResponse.redirect(new URL(redirectPath, request.url));
+    } catch { }
   }
 
   //return NextResponse.redirect(new URL("/home", request.url));
