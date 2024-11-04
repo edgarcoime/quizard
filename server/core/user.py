@@ -5,8 +5,21 @@ from config.database import AuthMethod, User, UserSession
 from random_username.generate import generate_username
 import re
 
+from core.collection import is_uuid
+
+def get_user_by_id_or_username(db: Session, username_or_id: str):
+    if is_uuid(username_or_id):
+        return get_user_by_id(db, username_or_id)
+    else:
+        return get_user_by_username(db, username_or_id)
+
+
 def get_user_by_id(db: Session, user_id: str):
     return db.query(User).filter(User.id == user_id).first()
+
+
+def get_user_by_username(db: Session, username: str):
+    return db.query(User).filter(User.username == username).first()
 
 
 def create_user(db: Session, name, provider, sub, picture):

@@ -4,8 +4,6 @@ from sqlalchemy import Boolean, DateTime, Enum, Float, create_engine, func
 from sqlalchemy.orm import Mapped, sessionmaker, relationship, DeclarativeBase, mapped_column
 from sqlalchemy import ForeignKey, String
 import uuid
-from sqlalchemy.engine import reflection
-from sqlalchemy.sql import text
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
