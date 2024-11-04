@@ -28,7 +28,6 @@ export default function Navbar() {
       });
 
       if (response.ok) {
-        localStorage.removeItem("authToken");
         router.push("/");
       } else {
         console.error("Failed to log out");

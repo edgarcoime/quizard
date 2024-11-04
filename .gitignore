@@ -5,3 +5,4 @@ __pycache__
 dhparam
 ssl_renew.sh
 sql*
+sql_app.db
