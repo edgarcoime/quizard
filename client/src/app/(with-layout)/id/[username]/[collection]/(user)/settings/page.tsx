@@ -1,16 +1,5 @@
 "use server";
 
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import DeleteCollectionButton from "./DeleteCollectionButton";
 
 export default async function Page({
@@ -27,50 +16,5 @@ export default async function Page({
 
       <DeleteCollectionButton />
     </div>
-  );
-}
-
-function GeneralSection({}: { collectionName: string }) {
-  "use client";
-
-  return (
-    <section>
-      <h2 className="text-lg">General</h2>
-      {/* Rename Collection */}
-      <div>
-        <form action="">
-          <input type="text" placeholder="Collection Name" />
-          <Button type="submit">Rename</Button>
-        </form>
-      </div>
-
-      {/* Delete Collection */}
-      <div>
-        <form action="">
-          <Button type="submit" variant="destructive">
-            Delete Collection
-          </Button>
-        </form>
-      </div>
-    </section>
-  );
-}
-
-function StatisticsSection() {
-  "use client";
-
-  return (
-    <section>
-      <h2 className="text-lg">Statistics</h2>
-
-      {/* Wipe Collection Statistics */}
-      <div>
-        <form action="">
-          <Button type="submit" variant="secondary">
-            Wipe Collection Statistics
-          </Button>
-        </form>
-      </div>
-    </section>
   );
 }
