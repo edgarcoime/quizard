@@ -17,7 +17,7 @@ export default async function Page({
       <>
       <UserCollectionCardSettings description="User Settings" />
 
-      <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>
+      <h1 className="flex flex-row justify-center text-5xl">Collections</h1>
       <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
         <CollectionView username={username} collections={data}/>
       </div>

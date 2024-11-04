@@ -14,21 +14,27 @@ import { headers, cookies } from "next/headers";
 
 function isUserPath(path: string) {
   const regex =
-    /\/id\/[^\/]+(?:\/settings|\/new|\/[^\/]+\/(?:settings|statistics|new)|\/[^\/]+\/[^\/]+\/(?:settings|statistics))/i;
+    /\/id\/[^\/]+(?:\/settings|\/new|\/[^\/]+\/(?:settings|statistics|new)|\/[^\/]+\/[^\/]+\/(?:settings|statistics))/g;
   return regex.test(path);
 }
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
   if (/\/api\/py/.test(request.url)) {
-    const { ua, browser: { name: browserName }, device: { model: deviceModel } } = userAgent(request)
+    const {
+      ua,
+      browser: { name: browserName },
+      device: { model: deviceModel },
+    } = userAgent(request);
     if (ua != "node") {
-      const requestHeaders = new Headers(request.headers)
-      requestHeaders.set("X-user-agent", ua ?? "")
-      requestHeaders.set("X-browser-name", browserName ?? "")
-      requestHeaders.set("X-device-model", deviceModel ?? "")
-      return NextResponse.next({ request: { headers: requestHeaders } })
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set("X-user-agent", ua ?? "");
+      requestHeaders.set("X-browser-name", browserName ?? "");
+      requestHeaders.set("X-device-model", deviceModel ?? "");
+      return NextResponse.next({ request: { headers: requestHeaders } });
     }
+
+    return NextResponse.next();
   }
 
   const currentPath = request.nextUrl.clone();
@@ -39,14 +45,21 @@ export async function middleware(request: NextRequest) {
   const cookieSession = cookieStore.get(cookieName);
 
   // If user is unauthorized accessing protected pages
+  //if (!cookieSession && isUserPath(currentPath.pathname)) {
   if (!cookieSession && isUserPath(currentPath.pathname)) {
+    console.log(cookieSession);
     console.log(
       "Unauthorized Private request in: ",
       currentPath.pathname,
       isUserPath(currentPath.pathname),
     );
 
-    return NextResponse.redirect(new URL("/signup", request.url));
+    // http://localhost:3000/id/johndoe/col1/settings
+    // http://localhost:3000/id/johndoe/col1/new
+
+    //Cookie is valid
+    const redirectPath = `/signup`;
+    return NextResponse.redirect(new URL(redirectPath, request.url));
   }
 
   // If user is signedin but going back to signup
@@ -54,13 +67,17 @@ export async function middleware(request: NextRequest) {
     console.log("Logged in user request in signup: ", currentPath.pathname);
 
     // Nextjs caches this call
-    const cookie = headers().get('cookie')
-    const data = await fetchUserData(cookie ? {
-      credentials: "include",
-      headers: {
-        Cookie: cookie
-      },
-    } : {});
+    const cookie = headers().get("cookie");
+    const data = await fetchUserData(
+      cookie
+        ? {
+            credentials: "include",
+            headers: {
+              Cookie: cookie,
+            },
+          }
+        : {},
+    );
 
     // TODO: if user data is invalid delete local storage
     // If data is null then cookie is invalid
