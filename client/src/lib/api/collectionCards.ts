@@ -5,7 +5,7 @@ import { UserCollection } from "@/types/UserCollection";
 
 
 export async function fetchCards(collectionName: string) {
-
+    let error_message = ""
     const cookie = headers().get("cookie")
 
     let collectionId : string = ""
@@ -26,8 +26,11 @@ export async function fetchCards(collectionName: string) {
     } : {});
 
     if (!res.ok) {
-        console.error("API error:", res.status, res.statusText);
-        return { error: res.statusText };
+        console.error("fetching cards API error:", res.status, res.statusText);
+        if(res.status == 405){
+            error_message = "405 Collection does not exist! Please double check the collection name"
+        }
+        return { error: error_message };
     }
 
     const data = await res.json();
