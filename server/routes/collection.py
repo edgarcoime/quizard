@@ -66,6 +66,17 @@ def delete(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_u
         raise HTTPException(404, "Could not find the collection.")
 
 
+@router.get("/{collection_id_or_slug}")
+def get(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_user)):
+    db_collection = get_collection(db, collection_id_or_slug)
+    if db_collection:
+        if db_collection.is_public or db_collection.user_id == user.id:
+            return db_collection
+        else:
+            raise HTTPException(401, "You are not allowed to see this collection.")
+    else:
+        raise HTTPException(404, "Could not find the collection.")
+
 @router.get("/{collection_id_or_slug}/cards")
 def get_cards(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_user)):
     db_collection = get_collection(db, collection_id_or_slug)
