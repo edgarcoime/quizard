@@ -36,20 +36,29 @@ export default async function Page({params }: {
 
   let cardInfo = await fetchCard(card)
   console.log(cardInfo)
-  let cardTile = create_card(cardInfo.question, cardInfo.answers[0].answer);
+  let cardTile;
+  if(!cardInfo.error){
+    cardTile = create_card(cardInfo.question, cardInfo.answers[0].answer);
+  }
+
 
 
 
   return (
     <>
-      <div className="flex justify-end p-4">
-        <SettingsButton desc="Card Settings" routeRedirect={settingsRoute} />
-      </div>
-      
-      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
-        {cardTile}
-      </div>
+    {cardInfo.error ? <h1 className="text-3xl text-red-600 p-4">{cardInfo.error}</h1>  : (
+      <>
+        <div className="flex justify-end p-4">
+          <SettingsButton desc="Card Settings" routeRedirect={settingsRoute} />
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
+          {cardTile}
+        </div>
+      </>
+    )}
     </>
+    
   );
 }
 
