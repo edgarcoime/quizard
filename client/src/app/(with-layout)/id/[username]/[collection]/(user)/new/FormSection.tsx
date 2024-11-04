@@ -14,28 +14,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { API_BASE_URL } from "@/constants";
 
 const answerSchema = z.object({
-  answer: z
-    .string()
-    .min(2, {
-      message: "Answer needs to be at least 2 characters long.",
-    })
-    .max(50, {
-      message: "Answer needs to be at most 50 characters long.",
-    }),
+  answer: z.string().min(2, {
+    message: "Answer needs to be at least 2 characters long.",
+  }),
   is_correct: z.boolean(),
 });
 
 const formSchema = z.object({
-  question: z
-    .string()
-    .min(2, {
-      message: "Question needs to be at least 2 characters long.",
-    })
-    .max(50, {
-      message: "Question needs to be at most 50 characters long.",
-    }),
+  question: z.string().min(2, {
+    message: "Question needs to be at least 2 characters long.",
+  }),
   question_type: z.string(),
   // answers is an array of objects
   // which contain the answer and whether it is correct or not
@@ -54,7 +45,23 @@ const DEFAULT_ANSWERS: z.infer<typeof answerSchema>[] = [
 ];
 
 async function createCard(payload: CreateCardPayload) {
+  const url = `${API_BASE_URL}/card`;
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
   console.log(payload);
+
+  if (!res.ok) {
+    console.error("API error:", res.status, res.statusText);
+    return { error: res.statusText };
+  }
+
+  const data = await res.json();
+  console.log(data);
 }
 
 export default function FormSection({

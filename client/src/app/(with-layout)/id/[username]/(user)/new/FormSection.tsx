@@ -91,7 +91,7 @@ export default function FormSection() {
     };
     console.log(payload);
 
-    //createCollection(payload);
+    createCollection(payload);
   }
 
   if (isLoading) return <LoadingView />;
