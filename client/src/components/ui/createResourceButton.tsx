@@ -15,11 +15,11 @@ export default function CreateResourceButton({ href }: { href: string }) {
     <Button
       size="icon"
       variant="outline"
-      className="rounded-full w-16 h-16"
+      className="rounded-full w-20 h-20 z-50"
       aria-label="Add item"
       onClick={handleClick}
     >
-      <Plus className="h-4 w-4" />
+      <Plus className="h-8 w-8" />
     </Button>
   );
 }
