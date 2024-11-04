@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { fetchCards } from "@/lib/api/collectionCards";
 import { fetchSingleCollection } from "@/lib/api/singleCollection";
+import CreateResourceButton from "@/components/ui/createResourceButton";
 
 
 
@@ -21,6 +22,7 @@ export default async function Page({
 
   const settingsRoute = `/id/${username}/${collectionSlug}/settings`;
   const playRoute = `/id/${username}/${collectionSlug}/play`
+  const createUrl = `/id/${username}/${collectionSlug}/new`;
 
   const data = await fetchCards(collectionSlug)
   const single_collection = await fetchSingleCollection(collectionSlug)
@@ -46,6 +48,7 @@ export default async function Page({
       </>
     )}
 
+      <CreateResourceButton href={createUrl} />
     </div>
   );
 }
