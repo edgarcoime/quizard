@@ -4,8 +4,9 @@ import UserCollectionCardSettings from "@/components/partials/UserCollectionCard
 import { IoPlayCircleOutline } from "react-icons/io5"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { fetchCards } from "@/lib/api/collectionCards";
 
-export default function Page({
+export default async function Page({
   params,
 }: {
   params: { username: string; collection: string };
@@ -16,8 +17,13 @@ export default function Page({
 
   const settingsRoute = `/id/${username}/${collectionId}/settings`;
   const playRoute = `/id/${username}/${collectionId}/play`
+
+  const data = await fetchCards(decodedCollectionId)
+  
   return (
     <div>
+      {data.error ?  (<h1 className="text-3xl text-red-600 p-4">{data.error}</h1> ): ( 
+        <>
       <UserCollectionCardSettings description="Collection Settings" />
 
       <h1 className="flex flex-row justify-center m-5 text-5xl">{title}</h1>
@@ -29,9 +35,10 @@ export default function Page({
       </div>
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
-        <CardsView username={username} collectionId={decodedCollectionId} />
+        <CardsView username={username} collectionId={decodedCollectionId} cards={data}/>
       </div>
-
+      </>
+    )}
 
     </div>
   );

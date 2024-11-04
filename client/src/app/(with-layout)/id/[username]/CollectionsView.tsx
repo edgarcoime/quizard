@@ -5,23 +5,22 @@ import { fetchUserCollection } from "@/lib/api/userCollections";
 import Link from "next/link";
 
 
-export default async function CollectionsView({ username }: { username: string }) {
+export default async function CollectionsView({ username, collections }: { username: string, collections: any }) {
 
-  // const [collections, setCollections] = useState([])
 
-  const data = await fetchUserCollection();
   
-  // const [collectionName, setCollectionName] = useState("");
-  console.log(data)
-  let collections: any = data
-  console.log("collections")
+  // const data = await fetchUserCollection();
+  
+  // console.log(data)
+  // let collections: any = data
+  // console.log("collections")
 
-  console.log(collections)
+  // console.log(collections)
+
 
   return (
     <>
-      
-      {collections && collections.map((col: any, idx: number) => (
+      { collections && collections.map((col: any, idx: number) => (
         <Link id={String(idx)} href={`/id/${username}/${col.title}`}>
           <Button
             key={idx}

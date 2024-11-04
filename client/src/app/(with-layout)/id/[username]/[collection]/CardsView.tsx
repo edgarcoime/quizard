@@ -26,17 +26,17 @@ function CardTile(props: {
   );
 }
 
-export default async function CardsView({ username,collectionId,}: {  username: string;collectionId: string;}) {
+export default async function CardsView({ username,collectionId,cards}: {  username: string;collectionId: string, cards: any}) {
   // const selectedCollection = cards.find(
   //   (col) => col.collectionName.toLowerCase() === collectionId.toLowerCase(),
   // );
   console.log("collection id:" + collectionId)
-  const data = await fetchCards(collectionId)
+  // const data = await fetchCards(collectionId)
 
-  const cards: any = data;
+  // const cards: any = data;
 
-  console.log("--------------cards: ")
-  console.log(cards)
+  // console.log("--------------cards: ")
+  // console.log(cards)
 
   return (
     <>
