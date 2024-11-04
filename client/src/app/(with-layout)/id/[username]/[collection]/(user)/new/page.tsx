@@ -1,9 +1,14 @@
-export default function Page({
+import { getSingle } from "@/lib/api/collection";
+import FormSection from "./FormSection";
+
+export default async function Page({
   params,
 }: {
   params: { username: string; collection: string };
 }) {
-  const { username, collection } = params;
+  const { username, collection: colSlug } = params;
+
+  const collection = await getSingle(colSlug);
 
   return (
     <>
@@ -12,7 +17,9 @@ export default function Page({
         remember
       </h1>
       <p>Username: {username}</p>
-      <p>Collection: {collection}</p>
+      <p>Collection: {JSON.stringify(collection)}</p>
+
+      <FormSection collectionId={collection.id} />
     </>
   );
 }

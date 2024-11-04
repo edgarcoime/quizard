@@ -20,9 +20,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { API_BASE_URL } from "@/constants";
 
 const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title needs to be at least 2 characters long.",
-  }),
+  title: z
+    .string()
+    .min(2, {
+      message: "Title needs to be at least 2 characters long.",
+    })
+    .max(30, {
+      message: "Title needs to be at most 30 characters long.",
+    }),
   is_public: z.boolean(),
 });
 
@@ -84,8 +89,9 @@ export default function FormSection() {
       is_public: values.is_public,
       slug,
     };
+    console.log(payload);
 
-    createCollection(payload);
+    //createCollection(payload);
   }
 
   if (isLoading) return <LoadingView />;
