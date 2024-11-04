@@ -6,17 +6,17 @@ import Link from "next/link";
 
 function CardTile(props: {
   username: string;
-  collectionId: string;
-  id: number;
+  collectionSlug: string;
+  cardSlug: string;
   question: string;
   answer: string;
 }) {
-  const { username, collectionId, id, question, answer } = props;
-
+  const { username, collectionSlug, cardSlug, question, answer } = props;
+  console.log("-------- card-slug: " + cardSlug)
   return (
-    <Link href={`/id/${username}/${collectionId}/${id.toString()}`}>
+    <Link href={`/id/${username}/${collectionSlug}/${cardSlug}`}>
       <Card
-        key={id}
+        key={cardSlug}
         className="w-full sm:w-auto p-8 bg-slate-300"
       >
         <CardTitle className="text-center">{question}</CardTitle>
@@ -26,26 +26,26 @@ function CardTile(props: {
   );
 }
 
-export default async function CardsView({ username,collectionId,cards}: {  username: string;collectionId: string, cards: any}) {
+export default async function CardsView({ username,collectionSlug,cards}: {  username: string;collectionSlug: string, cards: any}) {
   // const selectedCollection = cards.find(
   //   (col) => col.collectionName.toLowerCase() === collectionId.toLowerCase(),
   // );
-  console.log("collection id:" + collectionId)
+  console.log("---------------collection slug:" + collectionSlug)
   // const data = await fetchCards(collectionId)
 
   // const cards: any = data;
 
   // console.log("--------------cards: ")
   // console.log(cards)
-
+  console.log(cards)
   return (
     <>
       {cards && cards.map((card: any, idx: number) => (
         <CardTile
-          id={card.id}
+          cardSlug={(card.id).toString()}
           key={String(idx)}
           username={username}
-          collectionId={collectionId}
+          collectionSlug={collectionSlug}
           question={card.question}
           answer={card.answer}
         />
