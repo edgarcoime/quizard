@@ -16,8 +16,6 @@ export default async function Page({
         <strong>CREATE</strong> a card that contains the information you want to
         remember
       </h1>
-      <p>Username: {username}</p>
-      <p>Collection: {JSON.stringify(collection)}</p>
 
       <FormSection collectionId={collection.id} />
     </>
