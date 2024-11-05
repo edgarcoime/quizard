@@ -1,15 +1,19 @@
 "use server";
 
-import CreateResourceButton from "../ui/createResourceButton";
 import { headers, cookies } from "next/headers";
+import FloatingResourceButton, {
+  ButtonNode,
+} from "../ui/floatingResourceButton";
 
 export default async function FloatingResourceButtons({
   children,
-  createUrl,
+  buttons,
   ownerPrivilegeValidator,
 }: Readonly<{
   children: React.ReactNode;
-  createUrl: string;
+  createUrl?: string;
+  settingsUrl?: string;
+  buttons: ButtonNode[];
   // INFO: Function has to have server prileges not client
   ownerPrivilegeValidator: () => Promise<boolean>;
 }>) {
@@ -18,14 +22,35 @@ export default async function FloatingResourceButtons({
   const cookieSession = cookieStore.get(cookieName);
 
   const ownerPrivileges = cookieSession && (await ownerPrivilegeValidator());
+
+  function calculateJustify() {
+    switch (buttons.length) {
+      case 0:
+        return "justify-center";
+      case 1:
+        return "justify-end";
+      default:
+        return "justify-between";
+    }
+  }
   return (
     <div className="h-full static flex flex-col">
       {/* main content */}
       <div className="flex-grow">{children}</div>
 
-      <div className="sticky bottom-6 flex justify-end px-4">
-        {ownerPrivileges && <CreateResourceButton href={createUrl} />}
-      </div>
+      {ownerPrivileges && (
+        <div className={`sticky bottom-6 flex ${calculateJustify()} px-4`}>
+          {buttons.map((node, idx) => (
+            <FloatingResourceButton key={idx} node={node} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+//{ownerPrivileges && (
+//  <div className="sticky bottom-6 flex justify-between px-4">
+//    {!!settingsUrl && <ResourceSettingsButton href={settingsUrl} />}
+//    {!!createUrl && <CreateResourceButton href={createUrl} />}
+//  </div>
+//)}

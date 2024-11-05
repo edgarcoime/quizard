@@ -1,6 +1,7 @@
 import CollectionView from "./CollectionsView";
 import { getAllByUsername } from "@/lib/api/collection";
 import FloatingResourceButtons from "@/components/partials/FloatingResourceButtons";
+import { Plus } from "lucide-react";
 
 // TODO: refactor and add fetch logic to ensure this resource is the users
 async function validateOwner(): Promise<boolean> {
@@ -18,10 +19,18 @@ export default async function Page({
   const data = await getAllByUsername(username);
   const createUrl = `/id/${username}/new`;
 
+  const buttons = [
+    {
+      href: createUrl,
+      symbol: <Plus className="h-8 w-8" />,
+    },
+  ];
+
   return (
     <FloatingResourceButtons
       createUrl={createUrl}
       ownerPrivilegeValidator={validateOwner}
+      buttons={buttons}
     >
       <div className="pt-4">
         <h1 className="flex flex-row justify-center text-5xl">Collections</h1>
