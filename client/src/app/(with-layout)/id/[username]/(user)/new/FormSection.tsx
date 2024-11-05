@@ -73,7 +73,6 @@ function LoadingView() {
 
 export default function FormSection() {
   const { data, isLoading, isError } = useUserData();
-  const [formE] = useState<null | string>(null);
   const router = useRouter();
   const params = useParams<{ username: string }>();
 
@@ -106,6 +105,7 @@ export default function FormSection() {
     console.log("collection created");
     console.log(data);
 
+    // TODO: add error handling display for user
     const createdRoute = `/id/${params.username}/${data.slug}`;
     router.push(createdRoute);
   }

@@ -15,6 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/constants";
+import { collectionCard as CollectionCard } from "@/types/CollectionCard";
+import { useRouter, useParams } from "next/navigation";
 
 const answerSchema = z.object({
   answer: z.string().min(2, {
@@ -44,7 +46,7 @@ const DEFAULT_ANSWERS: z.infer<typeof answerSchema>[] = [
   },
 ];
 
-async function createCard(payload: CreateCardPayload) {
+async function createCard(payload: CreateCardPayload): Promise<CollectionCard> {
   const url = `${API_BASE_URL}/card`;
   const res = await fetch(url, {
     method: "PUT",
@@ -57,11 +59,11 @@ async function createCard(payload: CreateCardPayload) {
 
   if (!res.ok) {
     console.error("API error:", res.status, res.statusText);
-    return { error: res.statusText };
   }
 
-  const data = await res.json();
+  const data = (await res.json()) as CollectionCard;
   console.log(data);
+  return data;
 }
 
 export default function FormSection({
@@ -69,13 +71,26 @@ export default function FormSection({
 }: {
   collectionId: string;
 }) {
+  const router = useRouter();
+  const params = useParams<{ username: string; collection: string }>();
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const payload: CreateCardPayload = {
       ...values,
       collection_id: collectionId,
     };
 
-    createCard(payload);
+    const data = await createCard(payload);
+    if (!data) {
+      console.log("error creating card");
+      return;
+    }
+    console.log("card created");
+    console.log(data);
+
+    // TODO: add error handling display for user
+    const createdRoute = `/id/${params.username}/${params.collection}/${data.id}`;
+    router.push(createdRoute);
   }
 
   const form = useForm<z.infer<typeof formSchema>>({
