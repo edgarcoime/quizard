@@ -14,7 +14,7 @@ import { headers, cookies } from "next/headers";
 
 function isUserPath(path: string) {
   const regex =
-    /\/id\/[^\/]+(?:\/settings|\/new|\/[^\/]+\/(?:settings|statistics|new)|\/[^\/]+\/[^\/]+\/(?:settings|statistics))/g;
+    /\/id\/[^\/]+(?:\/settings|\/new|\/[^\/]+\/(?:settings|statistics|new|play)|\/[^\/]+\/[^\/]+\/(?:settings|statistics))/g;
   return regex.test(path);
 }
 
@@ -72,11 +72,11 @@ export async function middleware(request: NextRequest) {
       const data = await fetchUserData(
         cookie
           ? {
-            credentials: "include",
-            headers: {
-              Cookie: cookie,
-            },
-          }
+              credentials: "include",
+              headers: {
+                Cookie: cookie,
+              },
+            }
           : {},
       );
 
@@ -94,7 +94,7 @@ export async function middleware(request: NextRequest) {
       //Cookie is valid
       const redirectPath = `/id/${data.username}`;
       return NextResponse.redirect(new URL(redirectPath, request.url));
-    } catch { }
+    } catch {}
   }
 
   //return NextResponse.redirect(new URL("/home", request.url));

@@ -5,6 +5,33 @@ import { UserCollection as Collection } from "@/types/UserCollection";
 import "server-only";
 import { headers } from "next/headers";
 
+export async function getAllByUsername(
+  username: string,
+): Promise<Collection[]> {
+  const url = `${API_BASE_URL}/user/${username}/collections`;
+  const res = await fetch(url);
+
+  console.log(res);
+
+  if (res.status === 404) {
+    notFound();
+  }
+
+  if (!res.ok) {
+    throw new Error(
+      `Failed to get collections for that user (${username}). Please try again later.`,
+    );
+  }
+
+  const collections = (await res.json()) as Collection[];
+
+  if (!collections) {
+    notFound();
+  }
+
+  return collections;
+}
+
 export async function getSingle(slug: string): Promise<Collection> {
   const cookie = headers().get("cookie");
   const url = `${API_BASE_URL}/collection/${slug}`;
