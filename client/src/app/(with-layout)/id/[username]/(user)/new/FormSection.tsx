@@ -18,6 +18,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { API_BASE_URL } from "@/constants";
+import { useState } from "react";
+import { UserCollection } from "@/types/UserCollection";
+import { useRouter, useParams } from "next/navigation";
 
 const formSchema = z.object({
   title: z
@@ -35,7 +38,9 @@ interface CreateCollectionPayload extends z.infer<typeof formSchema> {
   slug: string;
 }
 
-async function createCollection(payload: CreateCollectionPayload) {
+async function createCollection(
+  payload: CreateCollectionPayload,
+): Promise<UserCollection> {
   const url = `${API_BASE_URL}/collection`;
   const res = await fetch(url, {
     method: "PUT",
@@ -48,11 +53,10 @@ async function createCollection(payload: CreateCollectionPayload) {
 
   if (!res.ok) {
     console.error("API error:", res.status, res.statusText);
-    return { error: res.statusText };
   }
 
-  const data = await res.json();
-  console.log(data);
+  const data = (await res.json()) as UserCollection;
+  return data;
 }
 
 function ErrorView() {
@@ -69,6 +73,8 @@ function LoadingView() {
 
 export default function FormSection() {
   const { data, isLoading, isError } = useUserData();
+  const router = useRouter();
+  const params = useParams<{ username: string }>();
 
   // additional hooks
   const form = useForm<z.infer<typeof formSchema>>({
@@ -91,7 +97,17 @@ export default function FormSection() {
     };
     console.log(payload);
 
-    createCollection(payload);
+    const data = await createCollection(payload);
+    if (!data) {
+      console.log("error creating collection");
+      return;
+    }
+    console.log("collection created");
+    console.log(data);
+
+    // TODO: add error handling display for user
+    const createdRoute = `/id/${params.username}/${data.slug}`;
+    router.push(createdRoute);
   }
 
   if (isLoading) return <LoadingView />;

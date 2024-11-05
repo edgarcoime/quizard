@@ -8,9 +8,10 @@ import { headers } from "next/headers";
 
 export async function getAllByCollection(
   collectionSlug: string,
+  opts?: RequestInit,
 ): Promise<Card[]> {
   const url = `${API_BASE_URL}/collection/${collectionSlug}/cards`;
-  const res = await fetch(url);
+  const res = await fetch(url, opts ?? {});
 
   if (res.status === 404) {
     notFound();
@@ -31,9 +32,12 @@ export async function getAllByCollection(
   return cards;
 }
 
-export async function getSingle(cardId: string): Promise<Card> {
+export async function getSingle(
+  cardId: string,
+  opts?: RequestInit,
+): Promise<Card> {
   const url = `${API_BASE_URL}/card/${cardId}`;
-  const res = await fetch(url);
+  const res = await fetch(url, opts ?? {});
 
   if (res.status === 404) {
     notFound();

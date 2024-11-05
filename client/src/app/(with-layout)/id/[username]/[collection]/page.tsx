@@ -26,8 +26,8 @@ export default async function Page({
   const createUrl = `/id/${username}/${collectionSlug}/new`;
   const settingsUrl = `/id/${username}/${collectionSlug}/settings`;
 
-  const cards = await getAllByCollection(collectionSlug);
-  const collection = await getSingle(collectionSlug);
+  const cards = await getAllByCollection(collectionSlug, { cache: "no-cache" });
+  const collection = await getSingle(collectionSlug, { cache: "no-cache" });
 
   const title = `Collection: ${collection.title}`;
 

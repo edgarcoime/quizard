@@ -16,7 +16,7 @@ export default async function Page({
   params: { username: string };
 }) {
   const { username } = params;
-  const data = await getAllByUsername(username);
+  const data = await getAllByUsername(username, { cache: "no-cache" });
   const createUrl = `/id/${username}/new`;
 
   const buttons = [
