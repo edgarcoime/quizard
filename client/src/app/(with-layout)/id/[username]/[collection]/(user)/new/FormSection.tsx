@@ -40,7 +40,7 @@ interface CreateCardPayload extends z.infer<typeof formSchema> {
 const DEFAULT_ANSWERS: z.infer<typeof answerSchema>[] = [
   {
     answer: "",
-    is_correct: false,
+    is_correct: true,
   },
 ];
 
