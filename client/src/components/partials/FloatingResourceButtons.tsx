@@ -11,8 +11,6 @@ export default async function FloatingResourceButtons({
   ownerPrivilegeValidator,
 }: Readonly<{
   children: React.ReactNode;
-  createUrl?: string;
-  settingsUrl?: string;
   buttons: ButtonNode[];
   // INFO: Function has to have server prileges not client
   ownerPrivilegeValidator: () => Promise<boolean>;
@@ -48,9 +46,3 @@ export default async function FloatingResourceButtons({
     </div>
   );
 }
-//{ownerPrivileges && (
-//  <div className="sticky bottom-6 flex justify-between px-4">
-//    {!!settingsUrl && <ResourceSettingsButton href={settingsUrl} />}
-//    {!!createUrl && <CreateResourceButton href={createUrl} />}
-//  </div>
-//)}

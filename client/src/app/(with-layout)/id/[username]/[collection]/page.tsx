@@ -44,7 +44,6 @@ export default async function Page({
 
   return (
     <FloatingResourceButtons
-      createUrl={createUrl}
       ownerPrivilegeValidator={validateOwner}
       buttons={buttons}
     >
