@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { fetchCards } from "@/lib/api/collectionCards";
 import { fetchSingleCollection } from "@/lib/api/singleCollection";
+import { getAllByCollection } from "@/lib/api/card";
+import { getSingle } from "@/lib/api/collection";
 import CreateResourceButton from "@/components/ui/createResourceButton";
+import FloatingResourceButtons from "@/components/partials/FloatingResourceButtons";
 
-
+// TODO: refactor and add fetch logic to ensure this resource is the users
+async function validateOwner(): Promise<boolean> {
+  return true;
+}
 
 
 export default async function Page({
@@ -24,15 +30,16 @@ export default async function Page({
   const playRoute = `/id/${username}/${collectionSlug}/play`
   const createUrl = `/id/${username}/${collectionSlug}/new`;
 
-  const data = await fetchCards(collectionSlug)
-  const single_collection = await fetchSingleCollection(collectionSlug)
-  const title = `Collection: ${single_collection.title}`;
+  const cards = await getAllByCollection(collectionSlug)
+  const collection = await getSingle(collectionSlug)
+
+  const title = `Collection: ${collection.title}`;
   
   return (
-    <div className="h-full static flex flex-col">
-      <div className="flex-grow">
-        {data.error ?  (<h1 className="text-3xl text-red-600 p-4">{data.error}</h1> ): ( 
-          <>
+    <FloatingResourceButtons
+      createUrl={createUrl}
+      ownerPrivilegeValidator={validateOwner}
+    >
         <UserCollectionCardSettings description="Collection Settings" />
 
         <h1 className="flex flex-row justify-center m-5 text-5xl">{title}</h1>
@@ -44,17 +51,10 @@ export default async function Page({
         </div>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
-          <CardsView username={username} collectionSlug={collectionSlug} cards={data}/>
+          <CardsView username={username} collectionSlug={collectionSlug} cards={cards}/>
         </div>
-        </>
-      )}
-
-      </div>
 
 
-      <div className="sticky bottom-6 flex justify-end px-4">
-        <CreateResourceButton href={createUrl} />
-      </div>
-    </div>
+    </FloatingResourceButtons>
   );
 }
