@@ -1,10 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-interface ButtonNode {
+export interface ButtonNode {
   href: string;
   symbol: React.ReactNode;
 }
