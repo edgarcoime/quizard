@@ -9,7 +9,7 @@ export async function getAllByUsername(
   username: string,
 ): Promise<Collection[]> {
   const url = `${API_BASE_URL}/user/${username}/collections`;
-  const res = await fetch(url);
+  const res = await fetch(url, {cache: "no-cache"});
 
   console.log(res);
 
