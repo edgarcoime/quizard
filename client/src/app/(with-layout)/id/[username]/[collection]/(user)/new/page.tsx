@@ -8,7 +8,7 @@ export default async function Page({
 }) {
   const { username, collection: colSlug } = params;
 
-  const collection = await getSingle(colSlug);
+  const collection = await getSingle(colSlug, username);
 
   return (
     <>

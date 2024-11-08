@@ -36,10 +36,11 @@ export async function getAllByUsername(
 
 export async function getSingle(
   slug: string,
+  owner: string,
   opts?: RequestInit,
 ): Promise<Collection> {
   const cookie = headers().get("cookie");
-  const url = `${API_BASE_URL}/collection/${slug}`;
+  const url = `${API_BASE_URL}/collection/${slug}?owner=${owner}`;
   const res = await fetch(url, opts ?? {});
   // TODO: change visibility to public
   //const res = await fetch(

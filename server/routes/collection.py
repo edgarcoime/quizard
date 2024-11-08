@@ -34,7 +34,7 @@ def create(collection: CollectionCreateRequest, db=Depends(get_db), user=Depends
 
 @router.post("/{collection_id_or_slug}")
 def update(collection_id_or_slug: str, collection: CollectionUpdateRequest, db=Depends(get_db), user=Depends(verify_user())):
-    db_collection = get_collection(db, collection_id_or_slug)
+    db_collection = get_collection(db, collection_id_or_slug, user.id)
     if db_collection:
         if collection.slug:
             if is_uuid(collection.slug):
@@ -54,7 +54,7 @@ def update(collection_id_or_slug: str, collection: CollectionUpdateRequest, db=D
 
 @router.delete("/{collection_id_or_slug}")
 def delete(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_user())):
-    db_collection = get_collection(db, collection_id_or_slug)
+    db_collection = get_collection(db, collection_id_or_slug, user.id)
     if db_collection:
         if db_collection.user_id == user.id:
             return delete_collection(db, db_collection.id)
@@ -65,8 +65,10 @@ def delete(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_u
 
 
 @router.get("/{collection_id_or_slug}")
-def get(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_user(raise_on_error=False))):
-    db_collection = get_collection(db, collection_id_or_slug)
+def get(collection_id_or_slug: str, owner: str | None = None, db=Depends(get_db), user=Depends(verify_user(raise_on_error=False))):
+    if not owner and not user:
+        raise HTTPException(404, "Cannot find records without 'owner' query param or user session")
+    db_collection = get_collection(db, collection_id_or_slug, owner or (user and user.id))
     if db_collection:
         if db_collection.is_public or (user and db_collection.user_id == user.id):
             return db_collection
@@ -77,8 +79,10 @@ def get(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_user
 
 
 @router.get("/{collection_id_or_slug}/cards")
-def get_cards(collection_id_or_slug: str, db=Depends(get_db), user=Depends(verify_user(raise_on_error=False))):
-    db_collection = get_collection(db, collection_id_or_slug)
+def get_cards(collection_id_or_slug: str, owner: str | None = None, db=Depends(get_db), user=Depends(verify_user(raise_on_error=False))):
+    if not owner and not user:
+        raise HTTPException(404, "Cannot find records without owner_id query param or user session")
+    db_collection = get_collection(db, collection_id_or_slug, owner or (user and user.id))
     if db_collection:
         if db_collection.is_public or (user and db_collection.user_id == user.id):
             return db_collection.cards

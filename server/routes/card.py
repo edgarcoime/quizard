@@ -52,7 +52,7 @@ def get(card_id: str, db=Depends(get_db), user=Depends(verify_user(raise_on_erro
 
 @router.put("")
 def create(card: CardCreateRequest, db=Depends(get_db), user=Depends(verify_user())):
-    collection = get_collection(db, card.collection_id)
+    collection = get_collection(db, card.collection_id, user.id)
     if collection:
         if collection.user_id == user.id:
             return create_card(db, card.collection_id, card.question, card.question_type, card.answers)
@@ -66,7 +66,7 @@ def create(card: CardCreateRequest, db=Depends(get_db), user=Depends(verify_user
 def update(card_id: str, card: CardUpdateRequest, db=Depends(get_db), user=Depends(verify_user())):
     db_card = get_card(db, card_id)
     if card.collection_id:
-        target_collection = get_collection(db, card.collection_id)
+        target_collection = get_collection(db, card.collection_id, user.id)
         if not target_collection or target_collection.user_id != user.id:
             raise HTTPException(401, "You are not authorized to move card to specified collection.")
     if db_card and db_card.collection:
