@@ -2,15 +2,34 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import and_
 from config.database import AuthMethod, User, UserSession
-import uuid
+from random_username.generate import generate_username
+import re
+
+from core.collection import is_uuid
+
+def get_user_by_id_or_username(db: Session, username_or_id: str):
+    if is_uuid(username_or_id):
+        return get_user_by_id(db, username_or_id)
+    else:
+        return get_user_by_username(db, username_or_id)
 
 
 def get_user_by_id(db: Session, user_id: str):
     return db.query(User).filter(User.id == user_id).first()
 
 
-def create_user(db: Session, name, provider, sub):
-    db_user = User(name=name, username=str(uuid.uuid4()))
+def get_user_by_username(db: Session, username: str):
+    return db.query(User).filter(User.username == username).first()
+
+
+def create_user(db: Session, name, provider, sub, picture):
+    while True:
+        username = re.sub(r'(?<!^)(?=[A-Z])', '_', re.sub(r'\d+','',generate_username()[0])).lower()
+        exist = db.query(User).filter(User.username == username).first()
+        if not exist:
+            break
+
+    db_user = User(name=name, username=username, picture=picture)
 
     if not db_user.auth_methods:
         db_user.auth_methods = []
@@ -40,11 +59,12 @@ def get_user_from_session(db: Session, session_id):
     return None
 
 
-def update_username(db: Session, user_id, new_user):
+def update_user(db: Session, user_id, new_user):
     user = db.query(User).filter(User.id == user_id).first()
     if user:
         user.username = new_user.username or user.username
         user.name = new_user.name or user.name
+        user.picture = new_user.picture or user.picture
         db.commit()
         db.refresh(user)
     return user

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "@/app/globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import ReactQueryProvider from "@/lib/providers/ReactQueryProvider";
 
 const geistSans = localFont({
   // TODO: Find a way to not use relative path for this?
@@ -32,10 +33,8 @@ export default function PublicLayout({
         // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         className={`antialiased`}
       >
-        {/**/}
-
-        {children}
-
+        {/* Provider for React Query */}
+        <ReactQueryProvider>{children}</ReactQueryProvider>
         {/* Speed insights for contentful paint */}
         <SpeedInsights />
       </body>

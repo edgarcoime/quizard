@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from sqlalchemy import Boolean, DateTime, Enum, Float, create_engine, func
 from sqlalchemy.orm import Mapped, sessionmaker, relationship, DeclarativeBase, mapped_column
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, String
 import uuid
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
@@ -12,7 +12,6 @@ engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 
 def get_db():
     db = SessionLocal()
@@ -31,6 +30,7 @@ class User(Base):
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name:Mapped[str] = mapped_column(String)
     username:Mapped[str] = mapped_column(String, unique=True, index=True)
+    picture:Mapped[str] = mapped_column(String, nullable=True)
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -58,8 +58,9 @@ class UserSession(Base):
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
     user_id:Mapped[str] = mapped_column(String, ForeignKey("user.id"))
-    user_agent: Mapped[str] = mapped_column(String)
-    ip_address: Mapped[str] = mapped_column(String)
+    user_agent:Mapped[str] = mapped_column(String, nullable=True)
+    browser_name:Mapped[str] = mapped_column(String, nullable=True)
+    device_model:Mapped[str] = mapped_column(String, nullable=True)
     created_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at:Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
     expires_at:Mapped[datetime] = mapped_column(DateTime)
@@ -71,6 +72,7 @@ class Collection(Base):
     __tablename__ = "collection"
 
     id:Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4())) 
+    slug:Mapped[str] = mapped_column(String, index=True)
     title:Mapped[str] = mapped_column(String, index=True)
     is_public:Mapped[bool] = mapped_column(Boolean, default=True)
     user_id:Mapped[str] = mapped_column(String, ForeignKey("user.id"))

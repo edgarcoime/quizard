@@ -8,14 +8,16 @@ from config.database import Base, engine
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
 app.add_middleware(
     SessionMiddleware,
     secret_key=settings.SESSION_SECRET_KEY,
     max_age=60 * 60 * 24,
-    https_only=os.getenv("ENV", "development") != "development",
+    https_only=settings.HOST.startswith("https"),
+    same_site="lax"
 )
 
-router = APIRouter(prefix="/api")
+router = APIRouter(prefix="/api/py")
 router.include_router(auth.router, prefix="/auth", tags=["auth"])
 router.include_router(user.router, prefix="/user", tags=["user"])
 router.include_router(collection.router, prefix="/collection", tags=["collection"])

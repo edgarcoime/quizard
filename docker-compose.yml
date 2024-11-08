@@ -1,17 +1,60 @@
-version: "1"
+version: "2"
 services:
   frontend:
     build: ./client
-    ports:
-      - "3000:80"
+    container_name: frontend
+    restart: unless-stopped
+    networks:
+      - app-network
   backend:
     build: ./server
-    ports:
-      - "8000:80"
+    container_name: backend
+    restart: unless-stopped
+    networks:
+      - app-network
   nginx:
-    build: .
+    image: nginx:mainline-alpine
+    container_name: nginx
+    restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - web-root:/var/www/html
+      - ./:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - dhparam:/etc/ssl/certs
+    networks:
+      - app-network
     depends_on:
       - frontend
       - backend
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path=/var/www/html --email reotamcoding@gmail.com --agree-tos --no-eff-email --force-renewal -d quizard.reotamai.me
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/reo/view
+      o: bind
+  dhparam:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/reo/quizard/dhparam/
+      o: bind
+networks:
+  app-network:
+    driver: bridge

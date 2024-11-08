@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session, joinedload
-
 from config.database import Answer, Card
 
 def get_card(db: Session, card_id):

@@ -1,129 +1,69 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import SettingsButton from "@/components/ui/settingsButton";
+import CardsView from "./CardsView";
+import { IoPlayCircleOutline } from "react-icons/io5";
 import Link from "next/link";
+import { getAllByCollection } from "@/lib/api/card";
+import { getSingle } from "@/lib/api/collection";
+import FloatingResourceButtons from "@/components/partials/FloatingResourceButtons";
+import { getCookieSession } from "@/lib/functions/getCookieSession";
+import { Cog, Plus } from "lucide-react";
 
-export default function Page({
+// TODO: refactor and add fetch logic to ensure this resource is the users
+async function validateOwner(): Promise<boolean> {
+  return true;
+}
+
+export default async function Page({
   params,
 }: {
   params: { username: string; collection: string };
 }) {
-  const { username, collection: collectionId } = params;
-  const decodedCollectionId = decodeURIComponent(collectionId);
-  const title = `Collection: ${decodedCollectionId}`;
-  const heading = "Cards";
+  const { username, collection: collectionSlug } = params;
+  // const decodedCollectionId = decodeURIComponent(collectionId);
 
-  const sampleCards = [
+  const session = getCookieSession();
+
+  const playRoute = `/id/${username}/${collectionSlug}/play`;
+  const createUrl = `/id/${username}/${collectionSlug}/new`;
+  const settingsUrl = `/id/${username}/${collectionSlug}/settings`;
+
+  const cards = await getAllByCollection(collectionSlug, { cache: "no-cache" });
+  const collection = await getSingle(collectionSlug, { cache: "no-cache" });
+
+  const title = `Collection: ${collection.title}`;
+
+  const buttons = [
     {
-      Id: 1,
-      collectionName: "Software Engineering",
-      cards: [
-        {
-          question: "What is coupling?",
-          answer: "When one class is too dependent on another class",
-        },
-        {
-          question: "What is a class diagram?",
-          answer: "Diagram that shows the relationships between classes",
-        },
-        {
-          question: "Why is a sequence diagram unique?",
-          answer: "Show the time flow of a program",
-        },
-      ],
+      href: settingsUrl,
+      symbol: <Cog className="h-8 w-8" />,
     },
     {
-      Id: 2,
-      collectionName: "Calculus",
-      cards: [
-        {
-          question: "What does a derivative represent?",
-          answer: "The slope of the original graph",
-        },
-      ],
-    },
-    {
-      Id: 3,
-      collectionName: "Operating Systems",
-      cards: [
-        {
-          question: "What does SMP stand for?",
-          answer: "Symmetric multi processing",
-        },
-      ],
-    },
-    {
-      Id: 4,
-      collectionName: "Network Security",
-      cards: [
-        {
-          question: "What does a firewall do?",
-          answer: "It helps block and monitor incoming and outgoing traffic",
-        },
-      ],
+      href: createUrl,
+      symbol: <Plus className="h-8 w-8" />,
     },
   ];
 
-  let list_of_cards: any = [];
-  sampleCards.map((cardcollection) => {
-    if (cardcollection.collectionName == decodedCollectionId) {
-      cardcollection.cards.map((card: any, index) =>
-        list_of_cards.push(
-          create_card(
-            username,
-            collectionId,
-            index,
-            card.question,
-            card.answer,
-          ),
-        ),
-      );
-    }
-  });
-
-  const settingsRoute = `/id/${username}/${collectionId}/settings`;
-
   return (
-    <div>
-      <div className="flex justify-end p-4">
-        <SettingsButton
-          routeRedirect={settingsRoute}
-          desc="Collection Settings"
+    <FloatingResourceButtons
+      ownerPrivilegeValidator={validateOwner}
+      buttons={buttons}
+    >
+      <h1 className="flex flex-row justify-center m-5 text-5xl">{title}</h1>
+
+      <div className="flex justify-center">
+        {!!session && (
+          <Link href={playRoute}>
+            <IoPlayCircleOutline className="text-5xl"></IoPlayCircleOutline>
+          </Link>
+        )}
+      </div>
+
+      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
+        <CardsView
+          username={username}
+          collectionSlug={collectionSlug}
+          cards={cards}
         />
       </div>
-      <h1 className="flex flex-row justify-center m-5 text-5xl">{title}</h1>
-      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
-        {list_of_cards}
-      </div>
-    </div>
-  );
-}
-
-function create_card(
-  username: String,
-  collectionId: String,
-  id: number,
-  question: String,
-  answer: String,
-) {
-  return (
-    <>
-      <Link href={`/id/${username}/${collectionId}/${id.toString()}`}>
-        <Card
-          key={id}
-          className="w-full sm:w-auto p-8 bg-slate-300 flex flex-col justify-center items-center"
-        >
-          <CardTitle className="text-center">{question}</CardTitle>
-          <CardContent className="text-center">{answer}</CardContent>
-        </Card>
-      </Link>
-    </>
+    </FloatingResourceButtons>
   );
 }

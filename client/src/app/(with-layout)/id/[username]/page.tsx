@@ -1,44 +1,42 @@
-import { Button } from "@/components/ui/button";
-import SettingsButton from "@/components/ui/settingsButton";
-import Link from "next/link";
+import CollectionView from "./CollectionsView";
+import { getAllByUsername } from "@/lib/api/collection";
+import FloatingResourceButtons from "@/components/partials/FloatingResourceButtons";
+import { Plus } from "lucide-react";
 
-export default function Page({ params }: { params: { username: string } }) {
+// TODO: refactor and add fetch logic to ensure this resource is the users
+async function validateOwner(): Promise<boolean> {
+  return true;
+}
+
+// Get Collection data here on the top level
+// SERVER SIDE fetching
+export default async function Page({
+  params,
+}: {
+  params: { username: string };
+}) {
   const { username } = params;
+  const data = await getAllByUsername(username, { cache: "no-cache" });
+  const createUrl = `/id/${username}/new`;
 
-  const sampleCollections = [
-    { Name: "Software Engineering", collectionId: 1 },
-    { Name: "Calculus", collectionId: 2 },
-    { Name: "Operating Systems", collectionId: 3 },
-    { Name: "Network security", collectionId: 4 },
+  const buttons = [
+    {
+      href: createUrl,
+      symbol: <Plus className="h-8 w-8" />,
+    },
   ];
 
-  let list_of_buttons: any = [];
-  sampleCollections.map((collection) => {
-    let id = collection.Name;
-    list_of_buttons.push(
-      <Link href={`/id/${username}/${id}`}>
-        <Button
-          key={collection.collectionId}
-          className="w-full sm:w-auto p-8 bg-slate-300"
-          variant="outline"
-        >
-          {collection.Name}
-        </Button>
-      </Link>,
-    );
-  });
-
-  const settingsRoute = `/id/${username}/settings`;
-
   return (
-    <div>
-      <div className="flex justify-end p-4">
-        <SettingsButton desc="User Settings" routeRedirect={settingsRoute} />
+    <FloatingResourceButtons
+      ownerPrivilegeValidator={validateOwner}
+      buttons={buttons}
+    >
+      <div className="pt-4">
+        <h1 className="flex flex-row justify-center text-5xl">Collections</h1>
+        <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
+          <CollectionView username={username} collections={data} />
+        </div>
       </div>
-      <h1 className="flex flex-row justify-center m-5 text-5xl">Collections</h1>
-      <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
-        {list_of_buttons}
-      </div>
-    </div>
+    </FloatingResourceButtons>
   );
 }
