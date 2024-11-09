@@ -22,7 +22,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << EOF
             cd /home/reo/quizard/
-            git pull origin 
+            git checkout main
+            git pull
             docker-compose down
             docker system prune -a -f
             docker-compose up -d --build
