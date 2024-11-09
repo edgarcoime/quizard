@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - sprint3_test_pipeline
+      - main
 
 jobs:
   deploy:
