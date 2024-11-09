@@ -24,5 +24,6 @@ jobs:
             cd /home/reo/quizard/
             git pull origin 
             docker-compose down
+            docker system prune -a -f
             docker-compose up -d --build
           EOF
