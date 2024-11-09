@@ -8,6 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      GROQ_API_KEY: "dummy-api-key"
 
     steps:
       - name: Checkout code
