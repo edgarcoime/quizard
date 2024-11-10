@@ -7,7 +7,9 @@ export default function Layout({
 }>) {
   return (
     <>
-      <UserBreadcrumb />
+      <div className="flex justify-center py-4">
+        <UserBreadcrumb />
+      </div>
       {children}
     </>
   );

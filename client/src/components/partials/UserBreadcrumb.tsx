@@ -9,6 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useScreenType } from "../hooks/useScreenType";
 
 interface BreadcrumbLink {
   title: string;
@@ -16,13 +17,17 @@ interface BreadcrumbLink {
 }
 
 const SETTINGS = {
-  maxWidthChar: 45,
+  mobileMaxWidth: 45,
+  desktopMaxWidth: 200,
 };
 
 export default function UserBreadcrumb() {
   const currentPath = usePathname();
+  const { isSuperSmall } = useScreenType();
 
-  const { maxWidthChar } = SETTINGS;
+  const { mobileMaxWidth, desktopMaxWidth } = SETTINGS;
+
+  console.log("isSuperSmall", isSuperSmall);
 
   function createBreadcrumbLinks(
     titleLinks: string[],
@@ -34,19 +39,21 @@ export default function UserBreadcrumb() {
       0,
     );
 
-    const titleLen = Math.floor(maxWidthChar / titleLinks.length);
+    const maxWidth = isSuperSmall ? mobileMaxWidth : desktopMaxWidth;
+
+    const titleLen = Math.floor(maxWidth / titleLinks.length);
     console.log("titleLen", titleLen);
     console.log("combinedLength", combinedLength);
 
-    return combinedLength > maxWidthChar
+    return combinedLength > maxWidth
       ? titleLinks.map((path, index) => ({
           title:
             path.length > titleLen ? path.slice(0, titleLen) + "..." : path,
-          url: "/" + paths.slice(0, index + 2).join("/"),
+          url: "/" + links.slice(0, index + 2).join("/"),
         }))
       : titleLinks.map((path, index) => ({
           title: path,
-          url: "/" + paths.slice(0, index + 2).join("/"),
+          url: "/" + links.slice(0, index + 2).join("/"),
         }));
   }
 
@@ -55,7 +62,7 @@ export default function UserBreadcrumb() {
   const breadcrumbPaths = currentPath.split("/").slice(2);
   const links: BreadcrumbLink[] = useMemo(
     () => createBreadcrumbLinks(breadcrumbPaths, paths),
-    [paths],
+    [paths, isSuperSmall],
   );
 
   return (
