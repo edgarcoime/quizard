@@ -9,9 +9,9 @@ function CardTile(props: {
   collectionSlug: string;
   cardSlug: string;
   question: string;
-  answer: string;
+  // answer: string;
 }) {
-  const { username, collectionSlug, cardSlug, question, answer } = props;
+  const { username, collectionSlug, cardSlug, question } = props;
   console.log("-------- card-slug: " + cardSlug)
   return (
     <Link href={`/id/${username}/${collectionSlug}/${cardSlug}`}>
@@ -20,7 +20,7 @@ function CardTile(props: {
         className="w-full sm:w-auto p-8 bg-slate-300"
       >
         <CardTitle className="text-center">{question}</CardTitle>
-        <CardContent className="text-center">{answer}</CardContent>
+        {/* <CardContent className="text-center">{answer}</CardContent> */}
       </Card>
     </Link>
   );
@@ -47,7 +47,7 @@ export default async function CardsView({ username,collectionSlug,cards}: {  use
           username={username}
           collectionSlug={collectionSlug}
           question={card.question}
-          answer={card.answer}
+          // answer={card.answer}
         />
       ))}
     </>
