@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Pie, PieChart, Label, Legend, Cell } from 'recharts';
+import { Pie, PieChart, Label, Cell } from 'recharts';
 import {
   Card,
   CardContent,
@@ -17,15 +17,29 @@ export default function StatisticsPage({
 }) {
   const { username, collection } = params;
 
+  // State to track when the component has mounted
+  const [mounted, setMounted] = React.useState(false);
+
   // Dummy data for correct vs incorrect answers with custom colors
   const chartData = [
     { status: 'Correct', count: 70, color: '#4caf50' }, // Green for correct
     { status: 'Incorrect', count: 30, color: '#f44336' }, // Red for incorrect
   ];
 
+  // Calculate total answers only after the component has mounted
   const totalAnswers = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.count, 0);
+  }, [chartData]);
+
+  // Set mounted to true once the component mounts on the client
+  React.useEffect(() => {
+    setMounted(true);
   }, []);
+
+  // Show loading state until the component has fully mounted
+  if (!mounted) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Card className="flex flex-col">
