@@ -26,11 +26,14 @@ export default function AnswerForm({answerArr, setAnswerArr, index, cardID, feed
     
     return(
         <>
+
         <form>
-            <input type="text" placeholder="Answer"  value={answerArr[index]} onChange={(e) => {setAnswer(e.target.value, answerArr, setAnswerArr, index) }}/>
-        
+            <div className="flex justify-center">
+            <input className="p-2 rounded-sm" type="text" placeholder="Answer"  value={answerArr[index]} onChange={(e) => {setAnswer(e.target.value, answerArr, setAnswerArr, index) }}/>
+            </div>
             <SubmitAnswerButton  cardID={cardID} answer={answerArr[index]} feedbackArr={feedbackArr} setFeedbackArr={setFeedbackArr} index={index}/>
         </form>
+
         </>
     )
 
