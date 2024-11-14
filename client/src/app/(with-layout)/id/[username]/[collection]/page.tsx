@@ -5,7 +5,7 @@ import { getAllByCollection } from "@/lib/api/card";
 import { getSingle } from "@/lib/api/collection";
 import FloatingResourceButtons from "@/components/partials/FloatingResourceButtons";
 import { getCookieSession } from "@/lib/functions/getCookieSession";
-import { Cog, Plus, BarChart3 } from "lucide-react"; // Import BarChart3 icon
+import { Cog, Plus, BarChart3 } from "lucide-react"; 
 
 // TODO: refactor and add fetch logic to ensure this resource is the users
 async function validateOwner(): Promise<boolean> {
