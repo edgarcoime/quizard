@@ -1,22 +1,13 @@
 from config.database import Base, engine
 from config.settings import settings
 from fastapi import APIRouter, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from routes import answer, auth, card, collection, submission, user
 from starlette.middleware.sessions import SessionMiddleware
-from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=settings.SESSION_SECRET_KEY,
-    max_age=60 * 60 * 24,
-    https_only=settings.HOST.startswith("https"),
-    same_site="lax",
-)
-
 
 origins = [
     settings.CLIENT,
@@ -31,6 +22,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SESSION_SECRET_KEY,
+    max_age=60 * 60 * 24,
+    https_only=settings.HOST.startswith("https"),
+    same_site="lax",
+)
 
 router = APIRouter(prefix="/api/py")
 router.include_router(auth.router, prefix="/auth", tags=["auth"])
