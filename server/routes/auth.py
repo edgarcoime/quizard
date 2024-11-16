@@ -30,7 +30,11 @@ async def login(provider: str, request: Request, redirect_to: Optional[str] = No
         else:
             request.session['redirect_to'] = referer
 
-    return await client.authorize_redirect(request, settings.HOST + "/api/py/auth/callback/" + provider)  # type: ignore
+
+    url = await client.authorize_redirect(request, settings.HOST + "/api/py/auth/callback/" + provider)  # type: ignore
+    print("referer: ", referer)
+    print("url: ", url)
+    return url
 
 
 @router.get("/callback/{provider}")

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from authlib.integrations.base_client import BaseOAuth
 from authlib.integrations.starlette_client import OAuth
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy import and_
@@ -8,7 +9,7 @@ from config.database import UserSession, get_db
 from config.settings import settings
 from core.user import get_user_from_session
 
-oauth = OAuth()
+oauth: BaseOAuth = OAuth()
 
 oauth.register(
     name="google",
