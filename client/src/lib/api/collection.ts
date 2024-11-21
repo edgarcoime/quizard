@@ -46,6 +46,10 @@ export async function getSingle(
 
   console.log(res);
 
+  if (res.status === 404) {
+    throw new Error(`Collection with slug "${slug}" does not exist.`);
+  }
+
   if (!res.ok) {
     throw new Error("Failed to fetch collection. Please try again later.");
   }
