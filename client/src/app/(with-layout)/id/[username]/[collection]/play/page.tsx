@@ -8,10 +8,10 @@ interface PlayProps {
 
 export default async function PlayPage({ params }: PlayProps) {
   const cards = await fetchCards(params.collection);
-    
+  
   return (
     <>
-      <PlayPageClient cards= {cards}/>
+      <PlayPageClient cards= {cards} username={params.username} collectionName={params.collection}/>
     </>
   );
 }

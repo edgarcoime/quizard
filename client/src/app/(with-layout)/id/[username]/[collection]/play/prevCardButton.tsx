@@ -9,7 +9,7 @@ interface prevBtnProps{
 export default function PrevCardButton({index, setIndexFun} : prevBtnProps){
     return(
         <>
-           { index != 0 && <IoChevronBackSharp className="text-3xl" onClick={() =>{ setIndexFun(index - 1)}} /> }
+           { index != 0 && <IoChevronBackSharp className="text-5xl" onClick={() =>{ setIndexFun(index - 1)}} /> }
         </>
     )
 
