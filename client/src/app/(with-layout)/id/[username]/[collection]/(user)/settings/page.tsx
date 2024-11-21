@@ -1,7 +1,6 @@
 "use server";
 
 import { getSingle } from "@/lib/api/collection";
-import CollectionEditSection from "./CollectionEditSection";
 import DeleteCollectionButton from "./DeleteCollectionButton";
 import CollectionFormSection from "@/components/forms/collection/CollectionFormSection";
 

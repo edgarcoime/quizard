@@ -21,7 +21,7 @@ export default function Page({
 
       {/* Form Section */}
       <div className="mt-6">
-        <CollectionFormSection />
+        <CollectionFormSection type="create" />
       </div>
     </div>
   );
