@@ -1,4 +1,4 @@
-import FormSection from "./FormSection";
+import CollectionFormSection from "@/components/forms/collection/CollectionFormSection";
 
 export default function Page({
   params,
@@ -21,7 +21,7 @@ export default function Page({
 
       {/* Form Section */}
       <div className="mt-6">
-        <FormSection />
+        <CollectionFormSection />
       </div>
     </div>
   );

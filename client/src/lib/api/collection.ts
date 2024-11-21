@@ -4,6 +4,7 @@ import { UserCollection as Collection } from "@/types/UserCollection";
 
 import "server-only";
 import { headers } from "next/headers";
+import { CreateCollectionPayload } from "@/types/CreateCollectionPayload";
 
 export async function getAllByUsername(
   username: string,
@@ -42,19 +43,6 @@ export async function getSingle(
   const cookie = headers().get("cookie");
   const url = `${API_BASE_URL}/collection/${slug}?owner=${owner}`;
   const res = await fetch(url, opts ?? {});
-  // TODO: change visibility to public
-  //const res = await fetch(
-  //  url,
-  //  cookie
-  //    ? {
-  //        method: "GET",
-  //        credentials: "include",
-  //        headers: {
-  //          Cookie: cookie,
-  //        },
-  //      }
-  //    : {},
-  //);
 
   console.log(res);
 
