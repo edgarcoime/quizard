@@ -11,13 +11,28 @@ export default async function Page({
   const collection = await getSingle(colSlug, username);
 
   return (
-    <>
-      <h1>
-        <strong>CREATE</strong> a card that contains the information you want to
-        remember
-      </h1>
+    <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+      {/* Page Header */}
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-gray-800">
+          <strong>Create</strong> a Card
+        </h1>
+        <p className="mt-2 text-gray-600">
+          Add cards to your collection to store important information.
+        </p>
+      </div>
 
-      <FormSection collectionId={collection.id} />
-    </>
+      {/* Collection Name Display */}
+      <div className="text-center">
+        <p className="text-gray-700 font-medium">
+          <span className="text-gray-500">Collection:</span> 
+        </p>
+      </div>
+
+      {/* Form Section */}
+      <div className="mt-6">
+        <FormSection collectionId={collection.id} />
+      </div>
+    </div>
   );
 }

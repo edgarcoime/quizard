@@ -9,9 +9,9 @@ class Settings(BaseSettings):
     HOST: str = ""
     GROQ_API_KEY: str = ""
 
-
     class Config:
         env_file = ".env"
+        extra = "allow"  # Allows extra fields in the model
 
 
 settings = Settings()
