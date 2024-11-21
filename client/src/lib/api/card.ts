@@ -12,7 +12,7 @@ export async function getAllByCollection(
   const res = await fetch(url, opts ?? {});
 
   if (res.status === 404) {
-    notFound();
+    throw new Error(`Collection with slug "${collectionSlug}" does not exist.`);
   }
 
   if (!res.ok) {
@@ -38,7 +38,7 @@ export async function getSingle(
   const res = await fetch(url, opts ?? {});
 
   if (res.status === 404) {
-    notFound();
+    throw new Error(`Card with ID "${cardId}" does not exist.`);
   }
 
   if (!res.ok) {
