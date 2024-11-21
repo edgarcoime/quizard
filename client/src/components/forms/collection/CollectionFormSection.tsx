@@ -1,7 +1,5 @@
 "use client";
 
-import toKebabCase from "@/lib/functions/toKebabCase";
-import useUserData from "@/components/hooks/useUserData";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,82 +15,37 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { API_BASE_URL } from "@/constants";
-import { useState } from "react";
+import { collectionFormSchema as formSchema } from "./collectionSchema";
 import { UserCollection } from "@/types/UserCollection";
+import toKebabCase from "@/lib/functions/toKebabCase";
+import { createCollection, updateCollection } from "./collectionMutations";
+import { CreateCollectionPayload } from "@/types/CreateCollectionPayload";
 import { useRouter, useParams } from "next/navigation";
+import { UpdateCollectionPayload } from "@/types/UpdateCollectionPayload";
 
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(2, {
-      message: "Title needs to be at least 2 characters long.",
-    })
-    .max(30, {
-      message: "Title needs to be at most 30 characters long.",
-    }),
-  is_public: z.boolean(),
-});
-
-interface CreateCollectionPayload extends z.infer<typeof formSchema> {
-  slug: string;
+interface props {
+  type: "create" | "update";
+  defaultState?: UserCollection | null;
 }
 
-async function createCollection(
-  payload: CreateCollectionPayload,
-): Promise<UserCollection> {
-  const url = `${API_BASE_URL}/collection`;
-  const res = await fetch(url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-  console.log(payload);
-
-  if (!res.ok) {
-    console.error("API error:", res.status, res.statusText);
-  }
-
-  const data = (await res.json()) as UserCollection;
-  return data;
-}
-
-function ErrorView() {
-  return <div>Error loading user data.</div>;
-}
-
-function LoadingView() {
-  return (
-    <div className="h-72 flex flex-col justify-center bg-gray-200">
-      <h2 className="uppercase text-center text-2xl">loading</h2>
-    </div>
-  );
-}
-
-export default function FormSection() {
-  const { data, isLoading, isError } = useUserData();
+export default function CollectionFormSection({ type, defaultState }: props) {
   const router = useRouter();
-  const params = useParams<{ username: string }>();
-
+  const params = useParams<{ username: string; collection: string }>();
   // additional hooks
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      is_public: true,
+      title: type === "update" ? defaultState?.title : "",
+      is_public: type === "update" ? defaultState?.is_public : true,
     },
   });
 
-  // logic
-  // TODO: find more elegant way to wait for results and display errors
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const slug = toKebabCase(values.title) ?? "default-slug";
+  async function createSubmit(formData: z.infer<typeof formSchema>) {
+    const slug = toKebabCase(formData.title) ?? "default-slug";
 
     const payload: CreateCollectionPayload = {
-      title: values.title,
-      is_public: values.is_public,
+      title: formData.title,
+      is_public: formData.is_public,
       slug,
     };
     console.log(payload);
@@ -110,11 +63,32 @@ export default function FormSection() {
     router.push(createdRoute);
   }
 
-  if (isLoading) return <LoadingView />;
-  if (isError) return <ErrorView />;
+  async function updateSubmit(formData: z.infer<typeof formSchema>) {
+    const originalSlug = params.collection;
+    const slug = defaultState!.slug ?? toKebabCase(formData.title);
+
+    const payload: UpdateCollectionPayload = {
+      title: formData.title,
+      is_public: formData.is_public,
+      slug,
+    };
+
+    const data = await updateCollection(originalSlug, payload);
+    if (!data) {
+      console.log("error updating collection");
+      return;
+    }
+
+    console.log("collection updated");
+    //const updatedRoute = `/id/${params.username}/${data.slug}`;
+    //router.push(updatedRoute);
+  }
+
+  const formSubmitHandler = type === "update" ? updateSubmit : createSubmit;
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(formSubmitHandler)}>
         <div className="my-6">
           <FormField
             control={form.control}
@@ -126,7 +100,9 @@ export default function FormSection() {
                   <Input placeholder="My Collection..." {...field} />
                 </FormControl>
                 <FormDescription>
-                  This is the title of your collection.
+                  {type === "update"
+                    ? `NOTE: Changing title will not change your original collection slug.(${defaultState?.slug})`
+                    : "This is the title of your collection."}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -161,7 +137,7 @@ export default function FormSection() {
         </div>
 
         <Button type="submit" className="w-full text-lg h-12">
-          Submit
+          Update
         </Button>
       </form>
     </Form>

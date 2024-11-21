@@ -4,6 +4,7 @@ import { UserCollection as Collection } from "@/types/UserCollection";
 
 import "server-only";
 import { headers } from "next/headers";
+import { CreateCollectionPayload } from "@/types/CreateCollectionPayload";
 
 export async function getAllByUsername(
   username: string,
@@ -42,21 +43,12 @@ export async function getSingle(
   const cookie = headers().get("cookie");
   const url = `${API_BASE_URL}/collection/${slug}?owner=${owner}`;
   const res = await fetch(url, opts ?? {});
-  // TODO: change visibility to public
-  //const res = await fetch(
-  //  url,
-  //  cookie
-  //    ? {
-  //        method: "GET",
-  //        credentials: "include",
-  //        headers: {
-  //          Cookie: cookie,
-  //        },
-  //      }
-  //    : {},
-  //);
 
   console.log(res);
+
+  if (res.status === 404) {
+    throw new Error(`Collection with slug "${slug}" does not exist.`);
+  }
 
   if (!res.ok) {
     throw new Error("Failed to fetch collection. Please try again later.");
