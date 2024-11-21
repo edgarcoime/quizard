@@ -17,18 +17,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { collectionFormSchema as formSchema } from "./collectionSchema";
 import { UserCollection } from "@/types/UserCollection";
-
-function ErrorView() {
-  return <div>Error loading user data.</div>;
-}
-
-function LoadingView() {
-  return (
-    <div className="h-72 flex flex-col justify-center bg-gray-200">
-      <h2 className="uppercase text-center text-2xl">loading</h2>
-    </div>
-  );
-}
+import toKebabCase from "@/lib/functions/toKebabCase";
+import { createCollection, updateCollection } from "./collectionMutations";
+import { CreateCollectionPayload } from "@/types/CreateCollectionPayload";
+import { useRouter, useParams } from "next/navigation";
+import { UpdateCollectionPayload } from "@/types/UpdateCollectionPayload";
 
 interface props {
   type: "create" | "update";
@@ -36,27 +29,66 @@ interface props {
 }
 
 export default function CollectionFormSection({ type, defaultState }: props) {
-  // receive default values
-
-  // interpolate data based on default
-
+  const router = useRouter();
+  const params = useParams<{ username: string; collection: string }>();
   // additional hooks
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: type === "update" ? defaultState?.title : "",
-      is_public: type === "update" ? defaultState?.is_public : false,
+      is_public: type === "update" ? defaultState?.is_public : true,
     },
   });
 
-  function formSubmit(formData: z.infer<typeof formSchema>) {
-    console.log("formData:", formData);
-    console.log("defaultData:", defaultState);
+  async function createSubmit(formData: z.infer<typeof formSchema>) {
+    const slug = toKebabCase(formData.title) ?? "default-slug";
+
+    const payload: CreateCollectionPayload = {
+      title: formData.title,
+      is_public: formData.is_public,
+      slug,
+    };
+    console.log(payload);
+
+    const data = await createCollection(payload);
+    if (!data) {
+      console.log("error creating collection");
+      return;
+    }
+    console.log("collection created");
+    console.log(data);
+
+    // TODO: add error handling display for user
+    const createdRoute = `/id/${params.username}/${data.slug}`;
+    router.push(createdRoute);
   }
+
+  async function updateSubmit(formData: z.infer<typeof formSchema>) {
+    const originalSlug = params.collection;
+    const slug = defaultState!.slug ?? toKebabCase(formData.title);
+
+    const payload: UpdateCollectionPayload = {
+      title: formData.title,
+      is_public: formData.is_public,
+      slug,
+    };
+
+    const data = await updateCollection(originalSlug, payload);
+    if (!data) {
+      console.log("error updating collection");
+      return;
+    }
+
+    console.log("collection updated");
+    //const updatedRoute = `/id/${params.username}/${data.slug}`;
+    //router.push(updatedRoute);
+  }
+
+  const formSubmitHandler = type === "update" ? updateSubmit : createSubmit;
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(formSubmit)}>
+      <form onSubmit={form.handleSubmit(formSubmitHandler)}>
         <div className="my-6">
           <FormField
             control={form.control}
@@ -68,7 +100,9 @@ export default function CollectionFormSection({ type, defaultState }: props) {
                   <Input placeholder="My Collection..." {...field} />
                 </FormControl>
                 <FormDescription>
-                  This is the title of your collection.
+                  {type === "update"
+                    ? `NOTE: Changing title will not change your original collection slug.(${defaultState?.slug})`
+                    : "This is the title of your collection."}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -103,7 +137,7 @@ export default function CollectionFormSection({ type, defaultState }: props) {
         </div>
 
         <Button type="submit" className="w-full text-lg h-12">
-          Submit
+          Update
         </Button>
       </form>
     </Form>

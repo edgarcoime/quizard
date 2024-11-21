@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/constants";
 import { CreateCollectionPayload } from "@/types/CreateCollectionPayload";
+import { UpdateCollectionPayload } from "@/types/UpdateCollectionPayload";
 import { UserCollection } from "@/types/UserCollection";
 
 export async function createCollection(
@@ -8,6 +9,7 @@ export async function createCollection(
   const url = `${API_BASE_URL}/collection`;
   const res = await fetch(url, {
     method: "PUT",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -24,11 +26,13 @@ export async function createCollection(
 }
 
 export async function updateCollection(
-  payload: CreateCollectionPayload,
+  slug: string,
+  payload: UpdateCollectionPayload,
 ): Promise<UserCollection | undefined> {
-  const url = `${API_BASE_URL}/collection`;
+  const url = `${API_BASE_URL}/collection/${slug}`;
   const res = await fetch(url, {
-    method: "PUT",
+    method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },

@@ -27,7 +27,12 @@ export default function DeleteCollectionButton() {
   }
 
   return (
-    <Button type="submit" variant="destructive" onClick={handleClick}>
+    <Button
+      type="submit"
+      variant="destructive"
+      className="w-full text-lg h-12"
+      onClick={handleClick}
+    >
       Delete Collection
     </Button>
   );
