@@ -120,7 +120,7 @@ export default function FormSection() {
             control={form.control}
             name="title"
             render={({ field }) => (
-              <FormItem className="my-4">
+              <FormItem className="my-6">
                 <FormLabel>Title</FormLabel>
                 <FormControl>
                   <Input placeholder="My Collection..." {...field} />
@@ -137,7 +137,7 @@ export default function FormSection() {
             control={form.control}
             name="is_public"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center content-center space-x-3 rounded-md border my-4 p-3 shadow">
+              <FormItem className="flex flex-row items-center content-center space-x-3 rounded-md border my-6 p-3 shadow">
                 <FormControl>
                   <Checkbox
                     className="w-6 h-6 align-middle"
