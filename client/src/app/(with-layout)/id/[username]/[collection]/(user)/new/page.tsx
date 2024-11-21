@@ -22,13 +22,6 @@ export default async function Page({
         </p>
       </div>
 
-      {/* Collection Name Display */}
-      <div className="text-center">
-        <p className="text-gray-700 font-medium">
-          <span className="text-gray-500">Collection:</span> 
-        </p>
-      </div>
-
       {/* Form Section */}
       <div className="mt-6">
         <FormSection collectionId={collection.id} />
