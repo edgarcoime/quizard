@@ -32,7 +32,7 @@ export default async function FloatingResourceButtons({
     }
   }
   return (
-    <div className="h-full static flex flex-col">
+    <div className="h-[95%] static flex flex-col">
       {/* main content */}
       <div className="flex-grow">{children}</div>
 
