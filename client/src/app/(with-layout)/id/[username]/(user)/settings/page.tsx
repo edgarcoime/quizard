@@ -16,7 +16,6 @@ export default async function Page() {
         <UserDataSection />
         <h2 className="font-bold">Sessions</h2>
         <UserSession />
-        
       </Card>
     </div>
   );
