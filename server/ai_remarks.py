@@ -27,8 +27,8 @@ def get_ai_remarks(answer_key: str, answer: str):
         # Generate AI remarks
         chat_completion = client.chat.completions.create(
             messages=[
-                {"role": "system", "content": "You are an AI assistant that provides feedback by identifying missing key points and words in a response compared to a reference answer. Your feedback should be concise, direct, and focused only on the missing or incorrect elements."},
-                {"role": "user", "content": f"Provide remarks on the comparison of these two sentences: '{sentence1}' and '{sentence2}'. The similarity score between them is {similarity_score:.2f}%. Provide feedback as if grading a student's answer, with sentence 1 as the answer key and sentence 2 as the student's response. Avoid providing redundant explanations or scoring the response."}
+                 {"role": "system", "content": "You are an AI assistant that provides feedback by identifying missing key points and words in a response compared to a reference answer. Your feedback should be concise, direct, and focused only on the missing or incorrect elements."},
+                {"role": "user", "content": f"Provide remarks on the comparison of these two sentences: '{answer_key}' and '{answer}'. The similarity score between them is {similarity_score:.2f}%. Provide feedback as if grading a student's answer, with sentence 1 as the answer key and sentence 2 as the student's response. Avoid providing redundant explanations"}
             ],
             model="llama3-8b-8192"
         )
