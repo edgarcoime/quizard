@@ -16,9 +16,7 @@ export default async function Page() {
         <UserDataSection />
         <h2 className="font-bold">Sessions</h2>
         <UserSession />
-        {/* History Section Placeholder */}
-        <h2 className="font-bold">History</h2>
-        <HistorySection />
+        
       </Card>
     </div>
   );
