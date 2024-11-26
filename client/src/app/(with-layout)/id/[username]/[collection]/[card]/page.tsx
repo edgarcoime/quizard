@@ -2,6 +2,7 @@ import FloatingResourceButtons from "@/components/partials/FloatingResourceButto
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import fetchCard from "@/lib/api/cardInfo";
 import { Cog } from "lucide-react";
+import CardHistorySection from "./CardHistorySection";
 
 // TODO: refactor and add fetch logic to ensure this resource is the users
 async function validateOwner(): Promise<boolean> {
@@ -50,7 +51,10 @@ export default async function Page({
     >
       <div className="flex flex-col sm:flex-row justify-center gap-4 p-4">
         {cardTile}
-      </div>
+      </div>    
+
+      <CardHistorySection previousSubmissions={cardInfo.my_submissions}/>
+
     </FloatingResourceButtons>
   );
 }

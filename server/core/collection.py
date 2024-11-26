@@ -1,6 +1,6 @@
 from sqlalchemy import and_ 
 from sqlalchemy.orm import Session
-from config.database import Collection
+from config.database import Collection, User
 import re
 
 
@@ -12,11 +12,20 @@ def get_collection_by_slug(db: Session, user_id, slug):
     return db.query(Collection).filter(and_(Collection.user_id == user_id, Collection.slug == slug)).first()
 
 
-def get_collection(db: Session, collection_id_or_slug):
+def get_collection(db: Session, collection_id_or_slug, owner):
     if is_uuid(collection_id_or_slug):
         collection = db.query(Collection).filter(Collection.id == collection_id_or_slug).first()
     else:
-        collection = db.query(Collection).filter(Collection.slug == collection_id_or_slug).first()
+        if owner and is_uuid(owner):
+            collection = db.query(Collection).filter(and_(Collection.slug == collection_id_or_slug, Collection.user_id == owner)).first()
+        elif owner and not is_uuid(owner):
+            user = db.query(User).filter(User.username == owner).first()
+            if user:
+                collection = db.query(Collection).filter(and_(Collection.slug == collection_id_or_slug, Collection.user_id == user.id)).first()
+            else:
+                collection = None
+        else:
+            collection = db.query(Collection).filter(Collection.slug == collection_id_or_slug).first()
     return collection
 
 

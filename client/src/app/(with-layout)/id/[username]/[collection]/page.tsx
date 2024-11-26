@@ -5,7 +5,7 @@ import { getAllByCollection } from "@/lib/api/card";
 import { getSingle } from "@/lib/api/collection";
 import FloatingResourceButtons from "@/components/partials/FloatingResourceButtons";
 import { getCookieSession } from "@/lib/functions/getCookieSession";
-import { Cog, Plus } from "lucide-react";
+import { Cog, Plus, BarChart3 } from "lucide-react"; 
 
 // TODO: refactor and add fetch logic to ensure this resource is the users
 async function validateOwner(): Promise<boolean> {
@@ -18,16 +18,16 @@ export default async function Page({
   params: { username: string; collection: string };
 }) {
   const { username, collection: collectionSlug } = params;
-  // const decodedCollectionId = decodeURIComponent(collectionId);
-
+  
   const session = getCookieSession();
 
   const playRoute = `/id/${username}/${collectionSlug}/play`;
   const createUrl = `/id/${username}/${collectionSlug}/new`;
   const settingsUrl = `/id/${username}/${collectionSlug}/settings`;
+  const statisticsUrl = `/id/${username}/${collectionSlug}/statistics`;
 
-  const cards = await getAllByCollection(collectionSlug, { cache: "no-cache" });
-  const collection = await getSingle(collectionSlug, { cache: "no-cache" });
+  const cards = await getAllByCollection(collectionSlug, username, { cache: "no-cache" });
+  const collection = await getSingle(collectionSlug, username, { cache: "no-cache" });
 
   const title = `Collection: ${collection.title}`;
 
@@ -37,9 +37,14 @@ export default async function Page({
       symbol: <Cog className="h-8 w-8" />,
     },
     {
+      href: statisticsUrl, 
+      symbol: <BarChart3 className="h-8 w-8" />,
+    },
+    {
       href: createUrl,
       symbol: <Plus className="h-8 w-8" />,
     },
+ 
   ];
 
   return (

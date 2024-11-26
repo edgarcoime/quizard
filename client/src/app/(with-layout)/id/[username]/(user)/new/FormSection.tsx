@@ -114,42 +114,55 @@ export default function FormSection() {
   if (isError) return <ErrorView />;
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input placeholder="My Collection..." {...field} />
-              </FormControl>
-              <FormDescription>
-                This is the title of your collection.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="my-6">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem className="my-4">
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="My Collection..." {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is the title of your collection.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="is_public"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>Mark the collection as public viewable</FormLabel>
-              </div>
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
+          <FormField
+            control={form.control}
+            name="is_public"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center content-center space-x-3 rounded-md border my-4 px-2 py-1 shadow">
+                <FormControl>
+                  <Checkbox
+                    className="w-6 h-6 align-middle"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel
+                  className="w-full h-8 inline-block align-middle cursor-pointer"
+                  style={{
+                    marginTop: "0",
+                    height: "full",
+                    alignContent: "center",
+                  }}
+                >
+                  Mark the collection as public viewable
+                </FormLabel>
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <Button type="submit" className="w-full text-lg h-12">
+          Submit
+        </Button>
       </form>
     </Form>
   );

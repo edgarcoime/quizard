@@ -1,4 +1,3 @@
-import os
 from fastapi import APIRouter, FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from routes import answer, auth, card, collection, submission, user

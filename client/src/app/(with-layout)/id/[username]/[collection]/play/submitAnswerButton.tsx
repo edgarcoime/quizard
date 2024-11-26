@@ -15,14 +15,16 @@ interface BUttonProps{
 
 export default function SubmitAnswerButton({cardID, answer, feedbackArr, setFeedbackArr, index}: BUttonProps) {
     const [isLoading, setIsLoading] = useState(false)
-    const [isError, setIsError] = useState("")
+    const [Error, setError] = useState("")
   async function handleClick(e:any) {
     e.preventDefault()
     const url = `${API_BASE_URL}/submission`;
 
     if(!answer){
-        setIsError("No answer provided must fill in before submitting!")
+        setError("No answer provided can't be blank!")
         return
+    }else{
+      setError("")
     }
     setIsLoading(true)
     const res = await fetch(url, {
@@ -50,10 +52,18 @@ export default function SubmitAnswerButton({cardID, answer, feedbackArr, setFeed
 
   return (
     <>
-    <Button type="submit"  disabled={isLoading} onClick={ (e) => handleClick(e)}>
-       { !isLoading ? "Submit" : "Loading ..."}
-    </Button>
-    <p className="text-red-600 text-lg">{isError}</p>
+    <div className="flex flex-col items-center">
+    
+      <p className="text-red-600 text-lg mt-2">
+          {Error}
+      </p>
+      
+        <Button className="text-lg mt-4" type="submit"  disabled={isLoading}  onClick={(e) => handleClick(e)}
+        >
+          {!isLoading ? "Submit" : "Loading ..."}
+        </Button>
+    </div>
+
     </>
   );
 }

@@ -35,7 +35,7 @@ const formSchema = z.object({
   answers: z.array(answerSchema),
 });
 
-interface CreateCardPayload extends z.infer<typeof formSchema> {
+export interface CreateCardPayload extends z.infer<typeof formSchema> {
   collection_id: string;
 }
 
@@ -111,54 +111,61 @@ export default function FormSection({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="question"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Question</FormLabel>
-              <FormControl>
-                <Input placeholder="My Question..." {...field} />
-              </FormControl>
-              <FormDescription>
-                This is the question for your card
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="my-6">
+          <FormField
+            control={form.control}
+            name="question"
+            render={({ field }) => (
+              <FormItem className="my-4">
+                <FormLabel>Question</FormLabel>
+                <FormControl>
+                  <Input placeholder="My Question..." {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is the question for your card
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={control}
-          name="question_type"
-          render={() => <></>}
-        />
+          <FormField
+            control={control}
+            name="question_type"
+            render={() => <></>}
+          />
 
-        {fields.map((field, index) => (
-          <div key={field.id}>
-            <FormField
-              control={control}
-              name={`answers.${index}.answer`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Answer</FormLabel>
-                  <FormControl>
-                    <Input placeholder="My answer" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          {fields.map((field, index) => (
+            <div key={field.id} className="my-4">
+              <FormField
+                control={control}
+                name={`answers.${index}.answer`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Answer</FormLabel>
+                    <FormControl>
+                      <Input placeholder="My answer" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      This is your awesome answer!
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={control}
-              name={`answers.${index}.is_correct`}
-              render={() => <></>}
-            />
-          </div>
-        ))}
+              <FormField
+                control={control}
+                name={`answers.${index}.is_correct`}
+                render={() => <></>}
+              />
+            </div>
+          ))}
+        </div>
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="w-full text-lg h-12">
+          Submit
+        </Button>
       </form>
     </Form>
   );
