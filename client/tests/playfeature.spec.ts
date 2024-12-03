@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { MAIN_URL, TEST_USER } from "./constants";
 
 test('redirect unauthorized user trying to access play feature to sign up', async ({ page }) => {
-  const response = await page.goto('https://quizard.reotamai.me/id/cherry_apricot/software-engineering/play');
+  const targetUrl = `${MAIN_URL}/id/${TEST_USER.username}/software-engineering/play`;
+  const response = await page.goto(targetUrl);
   
-  const current_url = page.url();
-  await expect(current_url).toBe("https://quizard.reotamai.me/signup");
+  const expectedUrl = `${MAIN_URL}/signup`;
+  await expect(page).toHaveURL(expectedUrl);
 
   // Expect welcome back heading to be displayed.
   await expect(page.getByRole('heading', { name: 'Welcome Back' })).toBeVisible();
