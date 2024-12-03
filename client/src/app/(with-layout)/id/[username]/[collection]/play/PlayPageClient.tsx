@@ -9,7 +9,7 @@ import AnswerForm from "./AnswerForm";
 import FeedbackCard from "./FeedbackCard";
 import useCardData from "@/components/hooks/useCardData";
 import DoneButton from "./DoneButton";
-
+//defines props
 interface PlayProps{
    cards: any
    username:string
@@ -17,7 +17,7 @@ interface PlayProps{
 }
 
 
-
+//The play page that shows all the components when answering an individual question based on the current question the user is on
 export function PlayPageClient({cards, username, collectionName}: PlayProps){
     const [index, setIndex] = useState(0);
     

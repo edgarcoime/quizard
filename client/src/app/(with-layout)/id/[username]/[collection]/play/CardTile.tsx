@@ -1,9 +1,7 @@
 "use client"
-import useCardData from "@/components/hooks/useCardData";
 import { Card, CardTitle } from "@/components/ui/card"
-import fetchCard from "@/lib/api/cardInfo";
-import { useEffect, useState } from "react"
 
+//interface for props defining props
 interface CardProps{
     question: string,
     answer: string,
@@ -12,7 +10,7 @@ interface CardProps{
     index: number
     id: string
 }
-
+//Flip the card and updates the state array on whether it is flipped
 async function flipCard(index: number, isFlipped: boolean, flippedArr: boolean[], setFlipFun: Function){
     const newFlippedArr = [...flippedArr];
     newFlippedArr[index] = !newFlippedArr[index]; 
@@ -22,18 +20,9 @@ async function flipCard(index: number, isFlipped: boolean, flippedArr: boolean[]
 
     
 }
-
-// async function  fetchAnswer(id: string){
-//     const data = await fetchCard(id)
-//     let answer: string = data.answers[0].answer
-//     return answer;
-
-// }
-
+// Card Tile component that returns the JSX for an individual card
 export default function CardTile({question,answer,  flippedArr, setFlippedArr, index, id}: CardProps){
     let isFlipped = flippedArr[index]
-
-    // const [content, setContent] = useState(question);
     const content = isFlipped ? answer : question;
 
     const handleClick = async () => {

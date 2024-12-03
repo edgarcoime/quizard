@@ -1,11 +1,12 @@
 "use server"
 import { fetchCards } from "@/lib/api/collectionCards";
 import { PlayPageClient } from "./PlayPageClient";
-
+//defines props
 interface PlayProps {
   params: { username: string; collection: string };
 }
 
+//server compoennet to fetch data before laoding page as the list of cards is necessary
 export default async function PlayPage({ params }: PlayProps) {
   const cards = await fetchCards(params.collection);
   let cardsinCollection = true
