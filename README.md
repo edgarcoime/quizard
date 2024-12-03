@@ -1,5 +1,5 @@
 # quizard
-An AI driven flash card Progressive Web App that helps users consolidate information.
+Quizard revolutionizes traditional flashcards by addressing key limitations: the inability to track weak areas, lack of answer history, and the tendency to encourage rote memorization. By leveraging AI, Quizard analyzes user performance to highlight challenging topics, maintain a history of answers to track progress, and provide detailed feedback to ensure deeper understanding rather than simple recall. This personalized approach helps users focus on improvement areas, prevents memorization pitfalls, and transforms flashcard-based learning into an adaptive and effective experience.
 
 # how to run in localhost
 ## prerequisites 
