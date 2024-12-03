@@ -35,7 +35,10 @@ def verify_user(raise_on_error: bool = True):
         except Exception as e:
             print(e)
             raise HTTPException(status_code=401, detail="Unauthorized")
-    return inner
+    return inner 
+
+verify_user_exit = verify_user(raise_on_error=True)
+verify_user_return = verify_user(raise_on_error=False)
 
 
 def get_sessions(db: Session, user_id):
