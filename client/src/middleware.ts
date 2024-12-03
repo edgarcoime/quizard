@@ -77,7 +77,9 @@ export async function middleware(request: NextRequest) {
                 Cookie: cookie,
               },
             }
-          : {},
+          : {
+            credentials: "include",
+          },
       );
 
       // TODO: if user data is invalid delete local storage
