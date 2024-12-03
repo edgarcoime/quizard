@@ -8,7 +8,8 @@
     "backend": "chmod +x ../server/setup_backend.sh && ../server/setup_backend.sh",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "tests": "npm install && npx playwright test"
   },
   "engines": {
     "node": "20"

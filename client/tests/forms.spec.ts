@@ -1,31 +1,38 @@
 import { test, expect } from "@playwright/test";
-import { MAIN_URL, TEST_USER } from "./constants";
+import { MAIN_URL, TEST_USER, TEST_COLLECTION, TEST_CARD } from "./constants";
 
 test("redirect unauthorized user from Collection create form", async ({
   page,
 }) => {
-  const target = `${MAIN_URL}/id/${TEST_USER.username}/new`;
-  const _response = await page.goto(target);
+  const targetUrl = `${MAIN_URL}/id/${TEST_USER.username}/new`;
+  const _response = await page.goto(targetUrl);
 
   const expectedUrl = `${MAIN_URL}/signup`;
   await expect(page).toHaveURL(expectedUrl);
 });
 
-//test("has title", async ({ page }) => {
-//  await page.goto("https://playwright.dev/");
-//
-//  // Expect a title "to contain" a substring.
-//  await expect(page).toHaveTitle(/Playwright/);
-//});
-//
-//test("get started link", async ({ page }) => {
-//  await page.goto("https://playwright.dev/");
-//
-//  // Click the get started link.
-//  await page.getByRole("link", { name: "Get started" }).click();
-//
-//  // Expects page to have a heading with the name of Installation.
-//  await expect(
-//    page.getByRole("heading", { name: "Installation" }),
-//  ).toBeVisible();
-//});
+test("redirect unauthorized user from Collection editing form", async ({
+  page,
+}) => {
+  const targetUrl = `${MAIN_URL}/id/${TEST_USER.username}/${TEST_COLLECTION.slug}/settings`;
+  const _response = await page.goto(targetUrl);
+
+  const expectedUrl = `${MAIN_URL}/signup`;
+  await expect(page).toHaveURL(expectedUrl);
+});
+
+test("redirect unauthorized user from Card create form", async ({ page }) => {
+  const targetUrl = `${MAIN_URL}/id/${TEST_USER.username}/${TEST_COLLECTION.slug}/new`;
+  const _response = await page.goto(targetUrl);
+
+  const expectedUrl = `${MAIN_URL}/signup`;
+  await expect(page).toHaveURL(expectedUrl);
+});
+
+test("redirect unauthorized user from Card editing form", async ({ page }) => {
+  const targetUrl = `${MAIN_URL}/id/${TEST_USER.username}/${TEST_COLLECTION.slug}/${TEST_CARD.id}/settings`;
+  const _response = await page.goto(targetUrl);
+
+  const expectedUrl = `${MAIN_URL}/signup`;
+  await expect(page).toHaveURL(expectedUrl);
+});
