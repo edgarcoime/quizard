@@ -1,7 +1,7 @@
-export const MAIN_URL = "http://localhost:3000";
+export const MAIN_URL = "https://quizard.reotamai.me";
 
 export const TEST_USER = {
-  username: "trusting_hare",
+  username: "test_user",
 };
 
 export const TEST_COLLECTION = {
@@ -10,7 +10,7 @@ export const TEST_COLLECTION = {
 };
 
 export const TEST_CARD = {
-  id: "696b9a0c-1a83-41bb-a7b3-9abf252f43ea",
+  id: "5fe93623-09f3-4a65-b5ad-888ec4917eeb",
   question: "question1",
   answer: "answer1",
 };
