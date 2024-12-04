@@ -28,7 +28,9 @@ export default async function Page({
 
   const cards = await getAllByCollection(collectionSlug, username, { cache: "no-cache" });
   const collection = await getSingle(collectionSlug, username, { cache: "no-cache" });
-
+  console.log("Cards in col:")
+  console.log(cards)
+  console.log("Collection:", collection)
   const title = `Collection: ${collection.title}`;
 
   const buttons = [

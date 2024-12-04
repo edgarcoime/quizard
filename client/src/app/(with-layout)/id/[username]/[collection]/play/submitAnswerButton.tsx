@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/constants";
 import { Submission } from "@/types/Submission";
 import { useState } from "react";
-
+//defines props
 interface BUttonProps{
     cardID: string, 
     answer: string,
@@ -12,7 +12,7 @@ interface BUttonProps{
     setFeedbackArr: Function
     index: number
 }
-
+// The button to submit your answer changes state depending on if ansawer given and waiting for response
 export default function SubmitAnswerButton({cardID, answer, feedbackArr, setFeedbackArr, index}: BUttonProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [Error, setError] = useState("")

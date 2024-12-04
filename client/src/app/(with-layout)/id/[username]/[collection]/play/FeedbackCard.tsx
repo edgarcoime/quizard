@@ -1,11 +1,11 @@
 import { Card , CardTitle, CardContent, CardFooter} from "@/components/ui/card";
 import { Submission } from "@/types/Submission";
-
+// defines props
 interface FeedbackPRops{
     feedbackArr : Submission [],
     index: number
 }
-
+// Returns the JSX fro a feedback Card using the passed in props
 export default function FeedbackCard({feedbackArr, index}: FeedbackPRops){
     const feedbackObj = feedbackArr[index]
     const unRounded_score = feedbackObj.score * 100
