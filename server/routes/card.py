@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException 
 from pydantic import BaseModel
 from config.database import get_db
-from core.auth import verify_user
+from core.auth import verify_user_return, verify_user_exit
 from core.card import create_card, delete_card, get_card, update_card
 from core.collection import get_collection
 from core.submission import get_submissions
@@ -35,7 +35,7 @@ class CardUpdateRequest(BaseModel):
 
 
 @router.get("/{card_id}")
-def get(card_id: str, db=Depends(get_db), user=Depends(verify_user(raise_on_error=False))):
+def get(card_id: str, db=Depends(get_db), user=Depends(verify_user_return)):
     db_card = get_card(db, card_id)
     if db_card and db_card.collection:
         if db_card.collection.is_public or (user and db_card.collection.user_id == user.id):
@@ -51,7 +51,7 @@ def get(card_id: str, db=Depends(get_db), user=Depends(verify_user(raise_on_erro
 
 
 @router.put("")
-def create(card: CardCreateRequest, db=Depends(get_db), user=Depends(verify_user())):
+def create(card: CardCreateRequest, db=Depends(get_db), user=Depends(verify_user_exit)):
     collection = get_collection(db, card.collection_id, user.id)
     if collection:
         if collection.user_id == user.id:
@@ -63,7 +63,7 @@ def create(card: CardCreateRequest, db=Depends(get_db), user=Depends(verify_user
 
 
 @router.post("/{card_id}")
-def update(card_id: str, card: CardUpdateRequest, db=Depends(get_db), user=Depends(verify_user())):
+def update(card_id: str, card: CardUpdateRequest, db=Depends(get_db), user=Depends(verify_user_exit)):
     db_card = get_card(db, card_id)
     if card.collection_id:
         target_collection = get_collection(db, card.collection_id, user.id)
@@ -79,7 +79,7 @@ def update(card_id: str, card: CardUpdateRequest, db=Depends(get_db), user=Depen
 
 
 @router.delete("/{card_id}")
-def delete(card_id: str, db=Depends(get_db), user=Depends(verify_user())):
+def delete(card_id: str, db=Depends(get_db), user=Depends(verify_user_exit)):
     db_card = get_card(db, card_id)
     if db_card and db_card.collection:
         if db_card.collection.user_id == user.id:

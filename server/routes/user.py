@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException 
 from pydantic import BaseModel
 from config.database import get_db
-from core.auth import verify_user
+from core.auth import verify_user_return, verify_user_exit
 from core.collection import get_collections_by_user_id
 from core.user import get_user_by_id, get_user_by_id_or_username, update_user
 
@@ -17,7 +17,7 @@ class UserUpdateRequest(BaseModel):
 
 
 @router.get("/{id_or_username}")
-def get(id_or_username: str, db=Depends(get_db), user=Depends(verify_user(raise_on_error=False))):
+def get(id_or_username: str, db=Depends(get_db), user=Depends(verify_user_return)):
     targetIdOrUsername = user.username if (id_or_username == "me" and user) else id_or_username
     db_user = get_user_by_id_or_username(db, targetIdOrUsername)
     if db_user:
@@ -27,7 +27,7 @@ def get(id_or_username: str, db=Depends(get_db), user=Depends(verify_user(raise_
 
 
 @router.post("/{id_or_username}")
-async def update(id_or_username: str, new_user: UserUpdateRequest, user=Depends(verify_user()), db=Depends(get_db)):
+async def update(id_or_username: str, new_user: UserUpdateRequest, user=Depends(verify_user_exit), db=Depends(get_db)):
     targetIdOrUsername = user.username if id_or_username == "me" else id_or_username
     db_user = get_user_by_id_or_username(db, targetIdOrUsername)
     if db_user:
@@ -40,7 +40,7 @@ async def update(id_or_username: str, new_user: UserUpdateRequest, user=Depends(
 
 
 @router.get("/{id_or_username}/collections")
-async def get_collections(id_or_username: str, db=Depends(get_db), user=Depends(verify_user(raise_on_error=False))):
+async def get_collections(id_or_username: str, db=Depends(get_db), user=Depends(verify_user_return)):
     targetIdOrUsername = user.username if (id_or_username == "me" and user) else id_or_username
     db_user = get_user_by_id_or_username(db, targetIdOrUsername)
 
